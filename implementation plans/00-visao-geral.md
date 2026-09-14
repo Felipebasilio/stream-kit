@@ -119,15 +119,15 @@ mede por imagem.
 
 ## Ordem das etapas e o que cada uma entrega
 
-| Plano | Etapa              | O que você ganha ao terminar                     |
-| ----- | ------------------ | ------------------------------------------------ |
-| 01    | Fundação           | Nada visível. Base tipada e testável             |
-| 02    | Núcleo do servidor | Paridade com o Python, em Node                   |
-| 03    | Overlays e canvas  | Cenas em 1440p e vertical, legíveis no celular   |
-| 04    | Painel             | Edição ao vivo com preview de verdade            |
-| 05    | Transições e som   | O salto de percepção de qualidade                |
-| 06    | App de Mac         | Clicar e abrir, sem terminal, com atualização    |
-| 90    | Integração Kick    | Parqueado. Retomar quando a audiência justificar |
+| Plano | Etapa              | Situação  | O que entrega                                         |
+| ----- | ------------------ | --------- | ----------------------------------------------------- |
+| 01    | Fundação           | concluída | Base tipada e testável                                |
+| 02    | Núcleo do servidor | concluída | Paridade com o Python, em Node                        |
+| 03    | Overlays e canvas  | concluída | Cenas em 1080p, 1440p e vertical, legíveis no celular |
+| 04    | Painel             | concluída | Edição ao vivo, desfazer, identidades salvas          |
+| 05    | Transições e som   | concluída | Transição animada, stinger e áudio por evento         |
+| 06    | App de Mac         | concluída | Clicar e abrir, sem terminal                          |
+| 90    | Integração Kick    | parqueada | Retomar quando a audiência justificar                 |
 
 **O kit Python continua funcionando durante toda a migração.** Use nas lives.
 Ele só sai de cena quando a etapa 03 estiver validada por você no OBS.
