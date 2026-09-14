@@ -1,0 +1,26 @@
+{
+  "name": "@stream-kit/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "stream-kit-server": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node dist/cli.js"
+  },
+  "dependencies": {
+    "@fastify/websocket": "^11.0.1",
+    "@stream-kit/core": "workspace:*",
+    "@stream-kit/types": "workspace:*",
+    "fastify": "^5.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "ws": "^8.18.0",
+    "@types/ws": "^8.5.13"
+  }
+}

@@ -11,6 +11,17 @@
  *    desfazer no painel sem copiar a arvore inteira a cada tecla.
  */
 
+/**
+ * Chaves que nunca podem ser escritas a partir de um patch vindo da rede.
+ *
+ * `JSON.parse('{"__proto__":{...}}')` cria `__proto__` como propriedade
+ * PROPRIA, entao ela aparece em `Object.keys`. Atribuir essa chave num objeto
+ * comum dispara o setter e TROCA O PROTOTIPO do objeto, fazendo o estado
+ * herdar propriedades que ninguem declarou. O painel fala com o servidor por
+ * HTTP, logo isso e superficie de ataque real, nao teoria.
+ */
+const CHAVES_PROIBIDAS = new Set(['__proto__', 'constructor', 'prototype']);
+
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   if (typeof value !== 'object' || value === null) return false;
   if (Array.isArray(value)) return false;
@@ -30,6 +41,7 @@ export function deepMerge<T>(base: T, patch: unknown): T {
 
   const result: Record<string, unknown> = { ...base };
   for (const key of Object.keys(patch)) {
+    if (CHAVES_PROIBIDAS.has(key)) continue;
     const next = patch[key];
     if (next === undefined) continue;
     const current = result[key];

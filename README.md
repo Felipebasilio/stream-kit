@@ -11,10 +11,10 @@ O projeto está sendo migrado de Python para Node + TypeScript.
 **As duas versões coexistem** — a antiga continua funcionando enquanto a nova
 é construída.
 
-| | Onde | Serve para |
-|---|---|---|
-| **Versão em uso** | `legacy-python/` | transmitir hoje |
-| **Versão em construção** | `packages/` | o app de Mac que vem aí |
+|                          | Onde             | Serve para              |
+| ------------------------ | ---------------- | ----------------------- |
+| **Versão em uso**        | `legacy-python/` | transmitir hoje         |
+| **Versão em construção** | `packages/`      | o app de Mac que vem aí |
 
 ### Para transmitir agora
 
@@ -32,7 +32,11 @@ Detalhes em [`legacy-python/LEIA-ME.md`](legacy-python/LEIA-ME.md).
 corepack enable pnpm     # só na primeira vez
 pnpm install
 pnpm check               # tipos + lint + testes com cobertura
+pnpm dev:server          # sobe o servidor Node
 ```
+
+O estado fica em `~/Library/Application Support/StreamKit/state.json`.
+Para usar outro arquivo: `--state <caminho>` ou a variável `STREAM_KIT_STATE`.
 
 ---
 
@@ -42,6 +46,9 @@ pnpm check               # tipos + lint + testes com cobertura
 packages/
   types/    contrato compartilhado entre servidor, painel e cenas
   core/     lógica pura: merge, migração, fila de eventos, contagem
+  server/   processo Node: estado, WebSocket, API
+scripts/
+  verificações de paridade e resistência
 legacy-python/
   kit em Python, funcional
 implementation plans/
@@ -59,22 +66,24 @@ errar quebra a compilação.
 Comece por [`implementation plans/00-visao-geral.md`](implementation%20plans/00-visao-geral.md),
 que registra as decisões tomadas e por quê. As etapas seguem numeradas.
 
-| Etapa | Situação |
-|---|---|
-| 01 — Fundação | concluída |
-| 02 — Servidor Node | a fazer |
-| 03 — Overlays e canvas | a fazer |
-| 04 — Painel | a fazer |
-| 05 — Transições e som | a fazer |
-| 06 — App de Mac | a fazer |
-| 90 — Integração Kick | parqueada |
+| Etapa                  | Situação  |
+| ---------------------- | --------- |
+| 01 — Fundação          | concluída |
+| 02 — Servidor Node     | a fazer   |
+| 03 — Overlays e canvas | a fazer   |
+| 04 — Painel            | a fazer   |
+| 05 — Transições e som  | a fazer   |
+| 06 — App de Mac        | a fazer   |
+| 90 — Integração Kick   | parqueada |
 
 ---
 
 ## Qualidade
 
 ```bash
-pnpm test:coverage
+pnpm check          # tipos + lint + testes com cobertura
+pnpm paridade       # compara o servidor Node com o Python, campo a campo
+pnpm resistencia    # Ctrl+C não perde edição, SIGKILL não corrompe o arquivo
 ```
 
 Piso de 95% em linhas, ramos, funções e comandos no núcleo — configurado para

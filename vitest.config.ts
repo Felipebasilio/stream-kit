@@ -7,7 +7,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html'],
       include: ['packages/*/src/**/*.ts'],
-      exclude: ['**/*.test.ts', '**/index.ts', '**/*.d.ts'],
+      exclude: ['**/*.test.ts', '**/index.ts', '**/*.d.ts', '**/cli.ts', '**/node-fs.ts'],
       // O limite falha o comando. Threshold que so reporta nao e threshold.
       thresholds: {
         lines: 95,

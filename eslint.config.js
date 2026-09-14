@@ -14,4 +14,19 @@ export default tseslint.config(
       eqeqeq: ['error', 'always', { null: 'ignore' }],
     },
   },
+  {
+    // Scripts de verificacao: rodam no Node, imprimem relatorio no terminal e
+    // nao sao empacotados. Nao faz sentido cobrar deles as mesmas regras.
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        fetch: 'readonly',
+        setTimeout: 'readonly',
+        URL: 'readonly',
+      },
+    },
+    rules: { 'no-console': 'off' },
+  },
 );

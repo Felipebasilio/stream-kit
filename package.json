@@ -16,7 +16,10 @@
     "typecheck": "tsc -b --force",
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write .",
-    "check": "pnpm typecheck && pnpm lint && pnpm test:coverage"
+    "check": "pnpm typecheck && pnpm lint && pnpm test:coverage",
+    "paridade": "node scripts/paridade.mjs",
+    "resistencia": "pnpm build && node scripts/resistencia.mjs",
+    "dev:server": "pnpm build && node packages/server/dist/cli.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

@@ -117,3 +117,38 @@ describe('isDeepEqual', () => {
     expect(isDeepEqual([1], { 0: 1 })).toBe(false);
   });
 });
+
+describe('protecao contra poluicao de prototipo', () => {
+  it('ignora __proto__ vindo de JSON', () => {
+    const patch: unknown = JSON.parse('{"__proto__":{"poluido":true}}');
+    const out = deepMerge({ a: 1 }, patch);
+    expect(Object.getPrototypeOf(out)).toBe(Object.prototype);
+    expect((out as Record<string, unknown>)['poluido']).toBeUndefined();
+    expect(({} as Record<string, unknown>)['poluido']).toBeUndefined();
+  });
+
+  it('ignora constructor e prototype', () => {
+    const patch: unknown = JSON.parse(
+      '{"constructor":{"x":1},"prototype":{"y":2},"ok":3}',
+    );
+    const out = deepMerge({ ok: 0 }, patch) as Record<string, unknown>;
+    expect(out['ok']).toBe(3);
+    expect(Object.hasOwn(out, 'constructor')).toBe(false);
+    expect(Object.hasOwn(out, 'prototype')).toBe(false);
+  });
+
+  it('barra tambem em profundidade', () => {
+    const patch: unknown = JSON.parse('{"brand":{"__proto__":{"poluido":true}}}');
+    const out = deepMerge({ brand: { name: 'A' } }, patch);
+    expect(Object.getPrototypeOf(out.brand)).toBe(Object.prototype);
+  });
+
+  it('barra em mergePatches tambem', () => {
+    const out = mergePatches<Record<string, unknown>>([
+      JSON.parse('{"__proto__":{"poluido":true}}'),
+      { ok: 1 },
+    ]);
+    expect(Object.getPrototypeOf(out)).toBe(Object.prototype);
+    expect(out['ok']).toBe(1);
+  });
+});
