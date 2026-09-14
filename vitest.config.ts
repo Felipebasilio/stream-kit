@@ -2,11 +2,11 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    include: ['packages/*/src/**/*.test.ts'],
+    include: ['packages/*/src/**/*.test.ts', 'apps/*/src/**/*.test.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
-      include: ['packages/*/src/**/*.ts'],
+      include: ['packages/*/src/**/*.ts', 'apps/*/src/**/*.ts'],
       exclude: [
         '**/*.test.ts',
         '**/index.ts',
@@ -17,6 +17,11 @@ export default defineConfig({
         // arquivos puros com teste proprio, e o resultado visual e medido por
         // comparacao de imagem, nao por cobertura de linha.
         '**/*.hooks.ts',
+        // Amarracao do Electron: sem tela e sem processo real nao ha teste
+        // unitario honesto. O que ela coordena esta em server-process.ts,
+        // version.ts, menu.ts e paths.ts, todos cobertos.
+        '**/apps/desktop/src/main.ts',
+        '**/apps/desktop/src/preload.ts',
       ],
       // O limite falha o comando. Threshold que so reporta nao e threshold.
       thresholds: {

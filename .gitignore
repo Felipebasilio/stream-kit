@@ -25,3 +25,6 @@ coverage/
 
 # capturas da verificacao visual (geradas, nao versionadas)
 capturas/
+
+# saida do empacotamento do app
+release/

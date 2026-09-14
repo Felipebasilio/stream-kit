@@ -104,6 +104,8 @@ Dois caminhos, e os dois funcionam:
 ## Estrutura
 
 ```
+apps/
+  desktop/  app de macOS (Electron): sobe tudo com um clique
 packages/
   types/    contrato compartilhado entre servidor, painel e cenas
   core/     lógica pura: merge, migração, fila de eventos, contagem
@@ -122,6 +124,36 @@ em três lugares por acordo tácito, e errar um nome só aparecia ao vivo. Agora
 errar quebra a compilação.
 
 ---
+
+## O app de Mac
+
+```bash
+pnpm dmg     # gera release/Stream Kit-0.1.0-arm64.dmg
+```
+
+Isso só roda **no macOS** — não dá para construir um app de macOS em outro
+sistema. Abra o `.dmg` e arraste o Stream Kit para a pasta Aplicativos.
+
+### Na primeira abertura o macOS vai bloquear
+
+O app **não é assinado** (decisão D6: sem conta Apple Developer, US$ 99/ano).
+Então:
+
+1. Clique com o **botão direito** no app → **Abrir**
+2. Na caixa que aparece, clique em **Abrir** de novo
+
+Uma vez por instalação. Depois, clique duplo normal.
+
+### Atualizações
+
+O app avisa quando há versão nova e abre a página do release; você baixa e
+arrasta por cima. **Não** há atualização automática, e isso é deliberado: no
+macOS ela exige assinatura, e o substituto caseiro seria um mecanismo que baixa
+e executa código na sua máquina — risco que não vale a economia de um arrastar.
+Suas configurações ficam fora do app e sobrevivem à troca.
+
+O plano [`06-app-mac.md`](implementation%20plans/06-app-mac.md) documenta os
+caminhos B e C, para o dia em que isso incomodar.
 
 ## Planos
 

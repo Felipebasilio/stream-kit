@@ -5,3 +5,4 @@ dist-types/
 node_modules/
 capturas/
 pnpm-lock.yaml
+release/

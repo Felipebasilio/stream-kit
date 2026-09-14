@@ -91,11 +91,15 @@ try {
       ),
   );
 
-  const esperados = diffs.filter((d) => d.campo.startsWith('alerts.messages.chat'));
-  const inesperados = diffs.filter((d) => !esperados.includes(d));
+  // Campo que existe so no Node e recurso NOVO (som, transicao, presets).
+  // Regressao de paridade e quando os DOIS tem valor e os valores divergem:
+  // ai algo que funcionava parou de funcionar igual.
+  const esperados = diffs.filter((d) => d.python === undefined);
+  const inesperados = diffs.filter((d) => d.python !== undefined);
 
   console.log(`campos comparados: ${Object.keys(doPython).length} blocos`);
-  console.log(`diferencas esperadas (campos novos do v1): ${esperados.length}`);
+  console.log(`campos novos, so no Node (esperado): ${esperados.length}`);
+  for (const d of esperados) console.log(`  + ${d.campo}`);
   console.log(`diferencas INESPERADAS: ${inesperados.length}`);
   for (const d of inesperados) {
     console.log(

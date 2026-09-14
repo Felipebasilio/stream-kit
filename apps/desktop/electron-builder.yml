@@ -1,0 +1,27 @@
+appId: com.felipebasilio.streamkit
+productName: Stream Kit
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist/**/*
+  - package.json
+extraResources:
+  # Os builds do servidor, das cenas e do painel viajam junto com o app.
+  - from: ../../packages/server/dist
+    to: server
+  - from: ../../packages/overlay/dist
+    to: overlay
+  - from: ../../packages/panel/dist
+    to: panel
+mac:
+  category: public.app-category.video
+  target:
+    - target: dmg
+      arch: [arm64]
+  # Decisao D6: app nao assinado. Sem conta Apple Developer, assinar e
+  # notarizar nao sao possiveis, e a atualizacao automatica do electron-builder
+  # exige assinatura no macOS. Ver plano 06.
+  identity: null
+dmg:
+  title: Stream Kit

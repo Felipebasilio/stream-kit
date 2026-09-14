@@ -65,6 +65,13 @@ async function main(): Promise<void> {
   const canvas = store.get().previewCanvas as CanvasId;
   const spec = CANVASES[canvas];
 
+  // Linha estruturada em stdout, para quem esta lendo com um programa.
+  // O texto bonito vai para stderr; misturar os dois obrigaria o app de Mac a
+  // raspar texto humano para descobrir em que porta o servidor ficou.
+  process.stdout.write(
+    `${JSON.stringify({ streamKit: 'ready', port: porta, panel: origin, state: caminhoEstado })}\n`,
+  );
+
   console.warn(`\n  Stream Kit no ar`);
   console.warn(`  Painel: ${origin}/`);
   console.warn(`  Estado: ${caminhoEstado}`);
