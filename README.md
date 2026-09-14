@@ -74,6 +74,7 @@ packages/
   core/     lógica pura: merge, migração, fila de eventos, contagem
   server/   processo Node: estado, WebSocket, API
   overlay/  cenas em React, independentes de resolução
+  panel/    painel de controle ao vivo
 scripts/
   verificações de paridade e resistência
 legacy-python/
@@ -112,6 +113,8 @@ pnpm check          # tipos + lint + testes com cobertura
 pnpm paridade       # compara o servidor Node com o Python, campo a campo
 pnpm resistencia    # Ctrl+C não perde edição, SIGKILL não corrompe o arquivo
 pnpm cenas          # captura as 18 imagens e verifica legibilidade e áreas seguras
+pnpm painel         # ponta a ponta: painel → servidor → cena
+pnpm verificar      # tudo acima, em sequência
 ```
 
 O `pnpm cenas` precisa do Chromium do Playwright uma vez:

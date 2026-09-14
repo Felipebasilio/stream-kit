@@ -88,6 +88,18 @@ export interface AlertConfig {
   };
 }
 
+/**
+ * Uma identidade visual salva com nome.
+ *
+ * Existe para trocar de "live de codigo" para "live de jogo" num clique, em
+ * vez de reeditar cor por cor no meio da transmissao.
+ */
+export interface Preset {
+  readonly id: string;
+  readonly name: string;
+  readonly brand: Brand;
+}
+
 export interface StreamKitState {
   schemaVersion: number;
   brand: Brand;
@@ -100,6 +112,8 @@ export interface StreamKitState {
   alerts: AlertConfig;
   /** Canvas escolhido no painel para a previa. Nao afeta o OBS. */
   previewCanvas: CanvasId;
+  /** Identidades salvas. Vazio ate o usuario salvar a primeira. */
+  presets: Preset[];
 }
 
 /**

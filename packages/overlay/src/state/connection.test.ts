@@ -161,6 +161,29 @@ describe('reconexao', () => {
     expect(criados).toHaveLength(1);
   });
 
+  it('o cancelamento padrao usa clearTimeout de verdade', () => {
+    vi.useFakeTimers();
+    const criados2: SocketFalso[] = [];
+    const fechar = connect(
+      {
+        url: 'ws://x',
+        createSocket: () => {
+          const s = new SocketFalso();
+          criados2.push(s);
+          return s;
+        },
+        baseDelayMs: 50,
+      },
+      { onState: () => {}, onEvent: () => {} },
+    );
+    criados2[0]?.disparar('close');
+    fechar();
+    vi.advanceTimersByTime(500);
+    // Se o clearTimeout padrao nao funcionasse, um segundo socket apareceria.
+    expect(criados2).toHaveLength(1);
+    vi.useRealTimers();
+  });
+
   it('usa setTimeout de verdade quando nenhum agendador e injetado', () => {
     const fechar = connect(
       { url: 'ws://x', createSocket: () => new SocketFalso() },

@@ -11,7 +11,7 @@
  */
 
 import { spawn } from 'node:child_process';
-import { mkdir, readdir, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium } from 'playwright';
@@ -54,6 +54,10 @@ async function esperarServidor(url) {
   throw new Error('servidor nao subiu');
 }
 
+// Estado limpo: a imagem de referencia precisa ser a mesma toda execucao.
+await mkdir(SAIDA, { recursive: true });
+await rm(join(SAIDA, 'estado-de-teste.json'), { force: true });
+
 const servidor = spawn(
   'node',
   [
@@ -67,7 +71,6 @@ const servidor = spawn(
 );
 servidor.saida = new Promise((r) => servidor.once('exit', r));
 
-await mkdir(SAIDA, { recursive: true });
 await esperarServidor(`http://127.0.0.1:${PORTA}/health`);
 
 const navegador = await chromium.launch({

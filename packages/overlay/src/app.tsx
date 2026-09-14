@@ -3,6 +3,7 @@ import type { JSX } from 'react';
 
 import { AreasSeguras } from './components/background.js';
 import { readEditModeFromUrl, readSceneFromUrl } from './canvas/url.js';
+import { useBrand } from './canvas/use-brand.hooks.js';
 import { useCanvas } from './canvas/use-canvas.hooks.js';
 import { Alertas } from './scenes/alerts.js';
 import { TelaCheia } from './scenes/fullscreen.js';
@@ -19,6 +20,7 @@ export function App({ search }: { search: string }): JSX.Element {
   const cena = readSceneFromUrl(search);
   const edicao = readEditModeFromUrl(search);
   const { state, evento } = useStreamState();
+  useBrand(state.brand);
 
   const conteudo = ehCenaDeTexto(cena) ? (
     <TelaCheia scene={cena} state={state} canvas={canvas} />

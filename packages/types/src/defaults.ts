@@ -68,5 +68,6 @@ export function createDefaultState(): StreamKitState {
       },
     },
     previewCanvas: DEFAULT_CANVAS_ID,
+    presets: [],
   };
 }

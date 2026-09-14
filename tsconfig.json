@@ -12,6 +12,9 @@
     },
     {
       "path": "./packages/overlay"
+    },
+    {
+      "path": "./packages/panel"
     }
   ]
 }
