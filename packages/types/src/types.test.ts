@@ -4,6 +4,8 @@ import {
   CANVASES,
   CANVAS_IDS,
   DEFAULT_CANVAS_ID,
+  MIN_READABLE_UNITS,
+  TYPE_SCALE,
   baseUnit,
   isCanvasId,
   resolveCanvas,
@@ -94,5 +96,25 @@ describe('estado padrao', () => {
 
   it('o canvas de previa e um canvas valido', () => {
     expect(isCanvasId(createDefaultState().previewCanvas)).toBe(true);
+  });
+});
+
+describe('escala tipografica', () => {
+  it('nenhum tamanho da escala fica abaixo do piso de legibilidade', () => {
+    for (const [nome, unidades] of Object.entries(TYPE_SCALE)) {
+      expect(unidades, `${nome} abaixo do piso`).toBeGreaterThanOrEqual(
+        MIN_READABLE_UNITS,
+      );
+    }
+  });
+
+  it('o piso em pixels e razoavel em cada canvas', () => {
+    const piso = (id: 'hd' | 'qhd' | 'vertical'): number =>
+      MIN_READABLE_UNITS * baseUnit(CANVASES[id]);
+    expect(piso('hd')).toBeCloseTo(23.76);
+    expect(piso('qhd')).toBeCloseTo(31.68);
+    // No vertical a altura e maior, entao o piso em pixels sobe junto — e certo:
+    // o quadro vertical tambem chega maior no celular.
+    expect(piso('vertical')).toBeCloseTo(42.24);
   });
 });

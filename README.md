@@ -38,6 +38,32 @@ pnpm dev:server          # sobe o servidor Node
 O estado fica em `~/Library/Application Support/StreamKit/state.json`.
 Para usar outro arquivo: `--state <caminho>` ou a variável `STREAM_KIT_STATE`.
 
+### Cenas no OBS
+
+Fonte de navegador, com a resolução do canvas escolhido:
+
+```
+http://localhost:7373/overlay/?scene=starting&canvas=qhd
+http://localhost:7373/overlay/?scene=brb&canvas=qhd
+http://localhost:7373/overlay/?scene=ending&canvas=qhd
+http://localhost:7373/overlay/?scene=ingame&canvas=qhd
+http://localhost:7373/overlay/?scene=talking&canvas=qhd
+http://localhost:7373/overlay/?scene=alerts&canvas=qhd
+```
+
+`canvas` aceita `hd` (1920x1080), `qhd` (2560x1440) e `vertical` (1080x1920).
+Acrescente `&edit=1` para ver as guias das áreas que o player cobre — nunca
+deixe isso ligado na transmissão.
+
+**Onde posicionar a webcam** (em unidades do canvas, multiplique pela altura/1000):
+
+| Cena    | Orientação | x   | y           | largura | altura |
+| ------- | ---------- | --- | ----------- | ------- | ------ |
+| ingame  | horizontal | 44u | rodapé 120u | 460u    | 259u   |
+| ingame  | vertical   | 30u | 90u         | resto   | 340u   |
+| talking | horizontal | 84u | 130u        | 1092u   | 614u   |
+| talking | vertical   | 30u | 90u         | resto   | 380u   |
+
 ---
 
 ## Estrutura
@@ -47,6 +73,7 @@ packages/
   types/    contrato compartilhado entre servidor, painel e cenas
   core/     lógica pura: merge, migração, fila de eventos, contagem
   server/   processo Node: estado, WebSocket, API
+  overlay/  cenas em React, independentes de resolução
 scripts/
   verificações de paridade e resistência
 legacy-python/
@@ -84,6 +111,13 @@ que registra as decisões tomadas e por quê. As etapas seguem numeradas.
 pnpm check          # tipos + lint + testes com cobertura
 pnpm paridade       # compara o servidor Node com o Python, campo a campo
 pnpm resistencia    # Ctrl+C não perde edição, SIGKILL não corrompe o arquivo
+pnpm cenas          # captura as 18 imagens e verifica legibilidade e áreas seguras
+```
+
+O `pnpm cenas` precisa do Chromium do Playwright uma vez:
+
+```bash
+pnpm exec playwright install chromium
 ```
 
 Piso de 95% em linhas, ramos, funções e comandos no núcleo — configurado para

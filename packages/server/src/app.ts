@@ -2,10 +2,13 @@
  * As rotas HTTP e o canal em tempo real.
  */
 
+import { existsSync } from 'node:fs';
+
 import { EventQueue, startCountdown, stopCountdown } from '@stream-kit/core';
 import { isClientRole, type CanvasId, type StreamEvent } from '@stream-kit/types';
 import Fastify, { type FastifyInstance } from 'fastify';
 import websocket from '@fastify/websocket';
+import fastifyStatic from '@fastify/static';
 
 import { Hub, type SocketLike } from './hub.js';
 import type { StateStore } from './state-store.js';
@@ -13,8 +16,16 @@ import { attachClient } from './ws-handler.js';
 import { listOverlayUrls } from './urls.js';
 import { validateEvent, validateMinutes, validatePatch } from './validate.js';
 
+export interface StaticRoots {
+  /** Pasta do build das cenas, servida em /overlay. */
+  readonly overlay?: string;
+  /** Pasta do build do painel, servida na raiz. */
+  readonly panel?: string;
+}
+
 export interface AppOptions {
   readonly store: StateStore;
+  readonly staticRoots?: StaticRoots;
   readonly hub?: Hub;
   readonly queue?: EventQueue;
   readonly now?: () => number;
@@ -57,6 +68,25 @@ export async function createApp(options: AppOptions): Promise<App> {
     const proximo = queue.shift();
     if (proximo !== undefined) hub.broadcast({ type: 'event', event: proximo });
   };
+
+  // Arquivos estaticos: registrados so quando a pasta existe, para o servidor
+  // subir normalmente durante o desenvolvimento, antes de haver build.
+  const overlayRoot = options.staticRoots?.overlay;
+  if (overlayRoot !== undefined && existsSync(overlayRoot)) {
+    await fastify.register(fastifyStatic, {
+      root: overlayRoot,
+      prefix: '/overlay/',
+      decorateReply: false,
+    });
+  }
+  const panelRoot = options.staticRoots?.panel;
+  if (panelRoot !== undefined && existsSync(panelRoot)) {
+    await fastify.register(fastifyStatic, {
+      root: panelRoot,
+      prefix: '/',
+      decorateReply: false,
+    });
+  }
 
   fastify.get('/health', () => ({ ok: true, clients: hub.size }));
 

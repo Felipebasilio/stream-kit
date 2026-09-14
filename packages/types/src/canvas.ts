@@ -67,5 +67,31 @@ export function baseUnit(canvas: CanvasSpec): number {
   return canvas.height / 1000;
 }
 
-/** Piso de legibilidade: nada de texto abaixo disso (ver plano 03). */
-export const MIN_READABLE_UNITS = 18;
+/**
+ * Piso de legibilidade, em unidades base (= 2,2% da altura do canvas).
+ *
+ * De onde vem o numero: a maioria assiste no celular, onde um quadro de
+ * 2560px de largura e reduzido para algo perto de 1170px fisicos. Nessa
+ * reducao, 2,2% da altura sobrevive; 1,5% (que era o tamanho dos @s no kit
+ * antigo) vira um borrao. Em pixels isso da 24px em 1080p e 32px em 1440p.
+ *
+ * Nao e opiniao: existe um teste que varre cada cena e falha se algum texto
+ * ficar abaixo disso.
+ */
+export const MIN_READABLE_UNITS = 22;
+
+/** Escala tipografica da cena, em unidades base. */
+export const TYPE_SCALE = {
+  /** Linha pequena acima do titulo, sempre em caixa alta e espacada. */
+  kicker: 28,
+  /** Texto corrido: recados, topicos, letreiro. */
+  body: 26,
+  /** Rotulos de destaque: "ME SEGUE LA", etiqueta da camera. */
+  label: 24,
+  /** @s e valores curtos. */
+  handle: 22,
+  /** O numero da contagem regressiva. */
+  countdown: 90,
+  /** O texto grande. Se ajusta sozinho para caber. */
+  title: 200,
+} as const;

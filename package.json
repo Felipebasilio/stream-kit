@@ -19,12 +19,15 @@
     "check": "pnpm typecheck && pnpm lint && pnpm test:coverage",
     "paridade": "node scripts/paridade.mjs",
     "resistencia": "pnpm build && node scripts/resistencia.mjs",
-    "dev:server": "pnpm build && node packages/server/dist/cli.js"
+    "dev:server": "pnpm build && node packages/server/dist/cli.js",
+    "cenas": "pnpm build && node scripts/cenas.mjs",
+    "clean": "find . -name '*.tsbuildinfo' -not -path '*/node_modules/*' -delete && rm -rf packages/*/dist packages/*/dist-types coverage capturas"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@vitest/coverage-v8": "^2.1.8",
     "eslint": "^9.17.0",
+    "playwright": "^1.63.0",
     "prettier": "^3.4.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.1",

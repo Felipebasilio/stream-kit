@@ -1,0 +1,88 @@
+/* =========================================================================
+   Sistema de unidades e cores.
+
+   REGRA: nenhum tamanho em px direto. Tudo em multiplo de --u, que vale a
+   altura do canvas / 1000. Assim 1080p e 1440p sao o MESMO desenho, e o
+   vertical muda de layout, nao de escala.
+   ========================================================================= */
+
+@font-face {
+  font-family: 'Anton';
+  src: url('../assets/Anton.ttf') format('truetype');
+  font-weight: 400;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/Inter.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: block;
+}
+
+:root {
+  --u: 1.44px; /* sobrescrito pelo canvas em tempo de execucao */
+  --canvas-w: 2560px;
+  --canvas-h: 1440px;
+
+  --accent: #2f7dff;
+  --accent-2: #6fd2ff;
+  --bg-1: #050a16;
+  --bg-2: #0d2f6b;
+  --intensity: 1;
+  --angle: 35deg;
+
+  --title-font: 'Anton', 'Haettenschweiler', 'Impact', sans-serif;
+  --ui-font: 'Inter', -apple-system, 'Helvetica Neue', sans-serif;
+
+  /* Escala tipografica. Espelha TYPE_SCALE em @stream-kit/types, e existe um
+     teste que falha se algum texto renderizado ficar abaixo do piso. */
+  --fs-kicker: calc(28 * var(--u));
+  --fs-body: calc(26 * var(--u));
+  --fs-label: calc(24 * var(--u));
+  --fs-handle: calc(22 * var(--u));
+  --fs-countdown: calc(90 * var(--u));
+  --fs-title: calc(200 * var(--u));
+
+  --gap-xs: calc(8 * var(--u));
+  --gap-sm: calc(14 * var(--u));
+  --gap-md: calc(22 * var(--u));
+  --gap-lg: calc(40 * var(--u));
+  --radius: calc(5 * var(--u));
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: var(--canvas-w);
+  height: var(--canvas-h);
+  overflow: hidden;
+  background: transparent;
+  font-family: var(--ui-font);
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+#raiz {
+  width: 100%;
+  height: 100%;
+}
+
+.cena {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Cenas de tela cheia pintam fundo; as de jogo ficam transparentes. */
+.cena--opaca {
+  background: var(--bg-1);
+}
+
+.oculto {
+  display: none !important;
+}

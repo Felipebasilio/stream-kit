@@ -8,6 +8,7 @@ __pycache__/
 # Node
 node_modules/
 dist/
+dist-types/
 build/
 coverage/
 *.tsbuildinfo
@@ -21,3 +22,6 @@ coverage/
 
 # store local do pnpm (aparece quando o store global nao e gravavel)
 .pnpm-store/
+
+# capturas da verificacao visual (geradas, nao versionadas)
+capturas/

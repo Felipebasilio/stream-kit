@@ -6,7 +6,8 @@
  */
 
 import { mkdir } from 'node:fs/promises';
-import { dirname } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { CANVASES, type CanvasId } from '@stream-kit/types';
 
@@ -37,7 +38,16 @@ async function main(): Promise<void> {
   await store.load();
 
   const porta = await findFreePort(canListen, portaPedida, HOST);
-  const app = await createApp({ store });
+  // Os builds ficam ao lado do servidor dentro do pacote publicado, e dois
+  // niveis acima durante o desenvolvimento no monorepo.
+  const aqui = dirname(fileURLToPath(import.meta.url));
+  const app = await createApp({
+    store,
+    staticRoots: {
+      overlay: resolve(aqui, '..', '..', 'overlay', 'dist'),
+      panel: resolve(aqui, '..', '..', 'panel', 'dist'),
+    },
+  });
   const { fastify, hub } = app;
 
   const ping = setInterval(() => {

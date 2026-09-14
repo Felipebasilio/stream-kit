@@ -203,6 +203,29 @@ describe('POST /api/countdown', () => {
   });
 });
 
+describe('arquivos estaticos', () => {
+  const raizOverlay = new URL('../../overlay/dist', import.meta.url).pathname;
+
+  it('serve o build das cenas em /overlay', async () => {
+    const outro = await createApp({ store, staticRoots: { overlay: raizOverlay } });
+    const r = await outro.fastify.inject({ method: 'GET', url: '/overlay/index.html' });
+    expect(r.statusCode).toBe(200);
+    expect(r.body).toContain('<div id="raiz">');
+    await outro.fastify.close();
+  });
+
+  it('pasta inexistente nao impede o servidor de subir', async () => {
+    // Acontece o tempo todo em desenvolvimento: servidor de pe antes do build.
+    const outro = await createApp({
+      store,
+      staticRoots: { overlay: '/nao/existe', panel: '/tambem/nao' },
+    });
+    const r = await outro.fastify.inject({ method: 'GET', url: '/health' });
+    expect(r.statusCode).toBe(200);
+    await outro.fastify.close();
+  });
+});
+
 describe('opcoes padrao', () => {
   it('createApp funciona sem hub, fila ou relogio informados', async () => {
     const outro = await createApp({ store });

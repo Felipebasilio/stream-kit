@@ -25,6 +25,11 @@ export default tseslint.config(
         fetch: 'readonly',
         setTimeout: 'readonly',
         URL: 'readonly',
+        // Os trechos passados ao `page.evaluate` rodam no navegador, dentro
+        // do script — daí os globais de DOM aparecerem aqui.
+        document: 'readonly',
+        window: 'readonly',
+        getComputedStyle: 'readonly',
       },
     },
     rules: { 'no-console': 'off' },
