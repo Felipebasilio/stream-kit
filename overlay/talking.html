@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Stream Kit — talking</title>
+<link rel="stylesheet" href="shared/base.css">
+<link rel="stylesheet" href="shared/scenes.css">
+</head>
+<body class="opaque">
+
+  <div class="bg" id="bg">
+    <div class="bg__base"></div>
+    <div class="bg__glow"></div>
+    <div class="bg__vignette"></div>
+  </div>
+
+  <div class="brandmark" data-brand-name></div>
+
+  <!-- coloque a webcam do OBS exatamente nesta área (1180x664 em 90,140) -->
+  <div class="talk-cam"></div>
+
+  <aside class="talk-panel" id="panel">
+    <h2 class="talk-panel__title" id="panelTitle"></h2>
+    <div id="topics"></div>
+  </aside>
+
+  <div class="lowerbar">
+    <div class="lowerbar__brand" data-brand-name></div>
+    <div class="lowerbar__mid">
+      <div class="ticker" id="ticker"></div>
+    </div>
+    <div class="lowerbar__right">
+      <div class="rotator" id="rotator"></div>
+      <div class="clock" id="clock"></div>
+    </div>
+  </div>
+
+<script type="module">
+import { connect, renderSocials, escapeHtml, buildBackground } from './shared/bus.js';
+
+buildBackground(document.getElementById('bg'), 10);
+
+const rotator = document.getElementById('rotator');
+
+connect(state => {
+  const t = state.talking || {};
+  document.getElementById('panelTitle').textContent = t.title || '';
+
+  const topics = (t.topics || []).filter(Boolean);
+  document.getElementById('topics').innerHTML = topics.map((topic, i) =>
+    `<div class="talk-topic" style="animation-delay:${i * 0.08}s">
+       <span class="talk-topic__n">${String(i + 1).padStart(2, '0')}</span>
+       <span>${escapeHtml(topic)}</span>
+     </div>`).join('');
+
+  document.getElementById('panel').classList.toggle(
+    'hidden', t.showTopics === false || (!topics.length && !t.title));
+
+  document.getElementById('ticker').textContent = (state.ingame || {}).ticker || '';
+  renderSocials(rotator, state);
+  restartRotation();
+});
+
+let rotTimer = null;
+function restartRotation() {
+  const items = [...rotator.querySelectorAll('.social')];
+  clearInterval(rotTimer);
+  if (!items.length) return;
+  let i = 0;
+  const show = () => items.forEach((el, n) => el.classList.toggle('on', n === i));
+  show();
+  if (items.length > 1) {
+    rotTimer = setInterval(() => { i = (i + 1) % items.length; show(); }, 5000);
+  }
+}
+
+function tickClock() {
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+tickClock();
+setInterval(tickClock, 10000);
+</script>
+</body>
+</html>

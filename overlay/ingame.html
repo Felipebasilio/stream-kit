@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Stream Kit — overlay in-game</title>
+<link rel="stylesheet" href="shared/base.css">
+<link rel="stylesheet" href="shared/scenes.css">
+</head>
+<body>
+
+  <!-- moldura da webcam: deixe a fonte de vídeo do OBS ATRÁS desta camada -->
+  <div class="cam" id="cam">
+    <div class="cam__label"><span class="cam__dot"></span><span id="camLabel">AO VIVO</span></div>
+  </div>
+
+  <div class="lowerbar">
+    <div class="lowerbar__brand" data-brand-name></div>
+    <div class="lowerbar__mid">
+      <div class="ticker" id="ticker"></div>
+    </div>
+    <div class="lowerbar__right">
+      <div class="rotator" id="rotator"></div>
+      <div class="nowplaying" id="nowplaying">
+        <div>
+          <span class="nowplaying__label">JOGANDO</span>
+          <span id="npName"></span>
+        </div>
+      </div>
+      <div class="clock" id="clock"></div>
+    </div>
+  </div>
+
+<script type="module">
+import { connect, renderSocials } from './shared/bus.js';
+
+const rotator = document.getElementById('rotator');
+const ticker  = document.getElementById('ticker');
+const camEl   = document.getElementById('cam');
+
+connect(state => {
+  const g = state.ingame || {};
+
+  camEl.classList.toggle('hidden', g.showCam === false);
+  document.getElementById('camLabel').textContent = g.camLabel || 'AO VIVO';
+
+  ticker.textContent = g.ticker || '';
+  ticker.parentElement.classList.toggle('hidden', g.showTicker === false || !g.ticker);
+
+  const np = document.getElementById('nowplaying');
+  document.getElementById('npName').textContent = g.nowPlaying || '';
+  np.classList.toggle('hidden', !g.nowPlaying);
+
+  document.getElementById('clock').classList.toggle('hidden', g.showClock === false);
+
+  renderSocials(rotator, state);
+  restartRotation();
+});
+
+/* ---- rodízio das redes sociais na barra ---- */
+let rotTimer = null;
+function restartRotation() {
+  const items = [...rotator.querySelectorAll('.social')];
+  clearInterval(rotTimer);
+  if (!items.length) return;
+  let i = 0;
+  const show = () => items.forEach((el, n) => el.classList.toggle('on', n === i));
+  show();
+  if (items.length > 1) {
+    rotTimer = setInterval(() => { i = (i + 1) % items.length; show(); }, 5000);
+  }
+}
+
+/* ---- relógio ---- */
+function tickClock() {
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+tickClock();
+setInterval(tickClock, 10000);
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# estado local do usuario (cada maquina tem o seu)
+state.json
+
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# macOS
+.DS_Store
+
+# logs e temporarios
+*.log
+*.tmp

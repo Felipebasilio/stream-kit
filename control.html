@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stream Kit — painel de controle</title>
+<link rel="stylesheet" href="overlay/shared/base.css">
+<style>
+  html, body { width: auto; height: auto; overflow: auto; background: #0a0f1c; }
+  body { padding: 0; color: #e8edf7; font-family: var(--ui-font); }
+
+  header {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 26px;
+    background: rgba(10,15,28,.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #1d2740;
+  }
+  header h1 { font-size: 16px; margin: 0; letter-spacing: .16em; font-weight: 800; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #ff5252; }
+  .dot.on { background: #35d07f; box-shadow: 0 0 10px #35d07f; }
+  .muted { color: #7c89a6; font-size: 13px; }
+
+  .wrap { display: grid; grid-template-columns: minmax(0,1fr) 640px; gap: 22px; padding: 22px 26px 80px; align-items: start; }
+  @media (max-width: 1180px) { .wrap { grid-template-columns: 1fr; } }
+
+  .card {
+    background: #101728;
+    border: 1px solid #1d2740;
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 18px;
+  }
+  .card h2 {
+    margin: 0 0 16px;
+    font-size: 12px; font-weight: 800;
+    letter-spacing: .22em; text-transform: uppercase; color: #8ea3cc;
+  }
+
+  label { display: block; font-size: 12px; color: #8ea3cc; margin: 0 0 6px; letter-spacing: .06em; }
+  input[type=text], input[type=number], textarea, select {
+    width: 100%; padding: 10px 12px;
+    background: #0a1120; color: #e8edf7;
+    border: 1px solid #253352; border-radius: 8px;
+    font: inherit; font-size: 14px;
+  }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+  input[type=color] {
+    width: 100%; height: 40px; padding: 2px; background: #0a1120;
+    border: 1px solid #253352; border-radius: 8px; cursor: pointer;
+  }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+
+  .row { display: grid; gap: 12px; margin-bottom: 14px; }
+  .row.two { grid-template-columns: 1fr 1fr; }
+  .row.three { grid-template-columns: 1fr 1fr 1fr; }
+  .row.four { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  button {
+    padding: 10px 16px; border-radius: 8px; border: 1px solid #2b3a5e;
+    background: #16213a; color: #e8edf7; font: inherit; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: .15s;
+  }
+  button:hover { background: #1d2b4a; border-color: #3a4d7a; }
+  button.primary { background: var(--accent); border-color: transparent; color: #fff; }
+  button.primary:hover { filter: brightness(1.12); }
+  button.ghost { background: transparent; }
+  button.danger { color: #ff8a8a; border-color: #55303c; }
+
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 8px 14px; border-radius: 999px; font-size: 13px; }
+  .tab.on { background: var(--accent); border-color: transparent; color: #fff; }
+
+  .social-row { display: grid; grid-template-columns: 34px 120px 1fr 34px; gap: 10px; align-items: center; margin-bottom: 8px; }
+  .social-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--accent); }
+
+  .urls { display: grid; gap: 8px; }
+  .url {
+    display: grid; grid-template-columns: 140px 1fr auto; gap: 10px; align-items: center;
+    font-size: 12px; background: #0a1120; border: 1px solid #1d2740; border-radius: 8px; padding: 8px 10px;
+  }
+  .url code { color: #9fc4ff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; }
+  .url b { color: #8ea3cc; font-weight: 700; letter-spacing: .08em; font-size: 11px; }
+
+  .preview-box {
+    position: sticky; top: 76px;
+    background: #101728; border: 1px solid #1d2740; border-radius: 12px; padding: 14px;
+  }
+  .frame-wrap {
+    position: relative; width: 100%; aspect-ratio: 16/9;
+    border-radius: 8px; overflow: hidden; background: #05070d;
+    background-image: linear-gradient(45deg,#141a28 25%,transparent 25%),linear-gradient(-45deg,#141a28 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#141a28 75%),linear-gradient(-45deg,transparent 75%,#141a28 75%);
+    background-size: 20px 20px; background-position: 0 0,0 10px,10px -10px,-10px 0;
+  }
+  iframe { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; border: 0; transform-origin: top left; }
+  .hint { font-size: 12px; color: #6f7f9e; line-height: 1.6; margin-top: 10px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="dot" id="conn"></span>
+  <h1>STREAM KIT — PAINEL</h1>
+  <span class="muted" id="status">conectando…</span>
+  <span style="flex:1"></span>
+  <button class="ghost" id="reset">Restaurar padrões</button>
+</header>
+
+<div class="wrap">
+
+  <!-- ================= coluna esquerda ================= -->
+  <div>
+
+    <div class="card">
+      <h2>Identidade</h2>
+      <div class="row two">
+        <div>
+          <label>Nome do canal</label>
+          <input type="text" id="brandName">
+        </div>
+        <div>
+          <label>Intensidade da animação de fundo</label>
+          <input type="range" id="intensity" min="0" max="1.6" step="0.05">
+        </div>
+      </div>
+      <div class="row four">
+        <div><label>Cor principal</label><input type="color" id="accent"></div>
+        <div><label>Cor de destaque</label><input type="color" id="accent2"></div>
+        <div><label>Fundo escuro</label><input type="color" id="bg1"></div>
+        <div><label>Fundo claro</label><input type="color" id="bg2"></div>
+      </div>
+      <div class="chips" id="palettes"></div>
+    </div>
+
+    <div class="card">
+      <h2>Textos das telas cheias</h2>
+      <div class="tabs" id="sceneTabs">
+        <button class="tab on" data-scene="starting">Começando</button>
+        <button class="tab" data-scene="brb">Volto já</button>
+        <button class="tab" data-scene="ending">Encerrando</button>
+      </div>
+      <div class="row two">
+        <div><label>Linha de cima</label><input type="text" id="sKicker"></div>
+        <div><label>Título grande</label><input type="text" id="sTitle"></div>
+      </div>
+      <div class="row"><div><label>Recado abaixo</label><input type="text" id="sNote"></div></div>
+    </div>
+
+    <div class="card">
+      <h2>Contagem regressiva</h2>
+      <div class="row two">
+        <div><label>Rótulo</label><input type="text" id="cdLabel"></div>
+        <div><label>Minutos</label><input type="number" id="cdMin" min="0" max="180" value="10"></div>
+      </div>
+      <div class="btns">
+        <button class="primary" id="cdStart">Iniciar</button>
+        <button id="cd5" data-min="5">5 min</button>
+        <button id="cd10" data-min="10">10 min</button>
+        <button id="cd15" data-min="15">15 min</button>
+        <button class="danger" id="cdStop">Parar</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Redes sociais</h2>
+      <div id="socials"></div>
+      <div class="row two" style="margin-top:12px">
+        <div><label>Título da barra</label><input type="text" id="socialsLabel"></div>
+        <div style="display:flex;align-items:flex-end"><button id="addSocial">+ Adicionar rede</button></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Overlay in-game</h2>
+      <div class="row three">
+        <div><label>Etiqueta da câmera</label><input type="text" id="camLabel"></div>
+        <div><label>Jogando agora</label><input type="text" id="nowPlaying" placeholder="deixe vazio para esconder"></div>
+        <div>
+          <label>Mostrar</label>
+          <div class="btns">
+            <label class="muted"><input type="checkbox" id="showCam"> câmera</label>
+            <label class="muted"><input type="checkbox" id="showClock"> relógio</label>
+            <label class="muted"><input type="checkbox" id="showTicker"> letreiro</label>
+          </div>
+        </div>
+      </div>
+      <div class="row"><div><label>Letreiro da barra inferior</label><input type="text" id="ticker"></div></div>
+    </div>
+
+    <div class="card">
+      <h2>Cena de papo</h2>
+      <div class="row"><div><label>Título do painel</label><input type="text" id="talkTitle"></div></div>
+      <div class="row"><div><label>Tópicos (um por linha)</label><textarea id="talkTopics" rows="4"></textarea></div></div>
+    </div>
+
+    <div class="card">
+      <h2>Alertas</h2>
+      <div class="row three">
+        <div><label>Duração (ms)</label><input type="number" id="alertDur" min="1500" max="20000" step="500"></div>
+        <div><label>Posição</label>
+          <select id="alertPos"><option value="top">Topo</option><option value="center">Centro</option><option value="bottom">Rodapé</option></select>
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <span class="muted">Teste com a cena de alertas aberta no OBS</span>
+        </div>
+      </div>
+      <div class="row two">
+        <div><label>Texto de follow</label><input type="text" id="msgFollow"></div>
+        <div><label>Texto de assinatura</label><input type="text" id="msgSub"></div>
+      </div>
+      <div class="row two">
+        <div><label>Texto de doação</label><input type="text" id="msgDonation"></div>
+        <div><label>Texto de raid</label><input type="text" id="msgRaid"></div>
+      </div>
+      <div class="btns">
+        <button data-alert="follow">Testar follow</button>
+        <button data-alert="sub">Testar assinatura</button>
+        <button data-alert="donation">Testar doação</button>
+        <button data-alert="raid">Testar raid</button>
+      </div>
+      <p class="hint">
+        Para disparar de fora (bot, Streamer.bot, script):<br>
+        <code id="curlHint"></code>
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ================= coluna direita ================= -->
+  <div>
+    <div class="preview-box">
+      <div class="tabs" id="previewTabs">
+        <button class="tab on" data-src="overlay/fullscreen.html?scene=starting">Começando</button>
+        <button class="tab" data-src="overlay/fullscreen.html?scene=brb">BRB</button>
+        <button class="tab" data-src="overlay/fullscreen.html?scene=ending">Ending</button>
+        <button class="tab" data-src="overlay/ingame.html">In-game</button>
+        <button class="tab" data-src="overlay/talking.html">Papo</button>
+        <button class="tab" data-src="overlay/alerts.html">Alertas</button>
+      </div>
+      <div class="frame-wrap" id="frameWrap"><iframe id="preview"></iframe></div>
+      <p class="hint">O xadrez representa transparência — nessas áreas o OBS mostra o que está atrás.</p>
+
+      <h2 style="margin:20px 0 10px;font-size:12px;letter-spacing:.22em;color:#8ea3cc">URLS PARA O OBS</h2>
+      <div class="urls" id="urls"></div>
+      <p class="hint">
+        No OBS: <b>+ → Navegador</b>, largura <b>1920</b>, altura <b>1080</b>, cole a URL.<br>
+        Marque <b>"Desligar a fonte quando não estiver visível"</b> para economizar CPU.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+/* ---------------------------------------------------------------- estado */
+let state = {};
+let scene = 'starting';
+let sending = null;
+
+const $ = id => document.getElementById(id);
+
+let pending = {};
+
+function patch(obj) {
+  // mescla local para o preview responder na hora...
+  deepMerge(state, obj);
+  // ...e acumula num pacote unico, para nenhuma alteracao se perder quando
+  // voce mexe em dois campos dentro da mesma janela de espera.
+  deepMerge(pending, obj);
+  clearTimeout(sending);
+  sending = setTimeout(() => {
+    const body = pending;
+    pending = {};
+    fetch('/api/state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).catch(() => {});
+  }, 120);
+}
+
+function deepMerge(base, p) {
+  for (const [k, v] of Object.entries(p)) {
+    if (v && typeof v === 'object' && !Array.isArray(v) && typeof base[k] === 'object' && base[k]) {
+      deepMerge(base[k], v);
+    } else base[k] = v;
+  }
+  return base;
+}
+
+/* --------------------------------------------------------------- conexão */
+const es = new EventSource('/api/stream');
+es.addEventListener('state', ev => {
+  state = JSON.parse(ev.data);
+  $('conn').classList.add('on');
+  $('status').textContent = 'ao vivo — mudanças aparecem no OBS na hora';
+  fillForm();
+});
+es.onerror = () => {
+  $('conn').classList.remove('on');
+  $('status').textContent = 'servidor offline — reiniciando conexão…';
+};
+
+/* ------------------------------------------------------------- formulário */
+let filling = false;
+
+function fillForm() {
+  filling = true;
+  const b = state.brand || {};
+  $('brandName').value = b.name || '';
+  $('accent').value = b.accent || '#2f7dff';
+  $('accent2').value = b.accent2 || '#6fd2ff';
+  $('bg1').value = b.bg1 || '#050a16';
+  $('bg2').value = b.bg2 || '#0d2f6b';
+  $('intensity').value = b.intensity ?? 1;
+  document.documentElement.style.setProperty('--accent', b.accent || '#2f7dff');
+
+  const sc = (state.scenes || {})[scene] || {};
+  $('sKicker').value = sc.kicker || '';
+  $('sTitle').value = sc.title || '';
+  $('sNote').value = sc.note || '';
+
+  $('cdLabel').value = (state.countdown || {}).label || '';
+  $('socialsLabel').value = state.socialsLabel || '';
+
+  const g = state.ingame || {};
+  $('camLabel').value = g.camLabel || '';
+  $('nowPlaying').value = g.nowPlaying || '';
+  $('ticker').value = g.ticker || '';
+  $('showCam').checked = g.showCam !== false;
+  $('showClock').checked = g.showClock !== false;
+  $('showTicker').checked = g.showTicker !== false;
+
+  const t = state.talking || {};
+  $('talkTitle').value = t.title || '';
+  $('talkTopics').value = (t.topics || []).join('\n');
+
+  const a = state.alerts || {};
+  $('alertDur').value = a.duration || 5000;
+  $('alertPos').value = a.position || 'top';
+  const m = a.messages || {};
+  $('msgFollow').value = m.follow || '';
+  $('msgSub').value = m.sub || '';
+  $('msgDonation').value = m.donation || '';
+  $('msgRaid').value = m.raid || '';
+
+  renderSocialRows();
+  filling = false;
+}
+
+function bind(id, apply) {
+  const el = $(id);
+  const handler = () => { if (!filling) apply(el.type === 'checkbox' ? el.checked : el.value); };
+  el.addEventListener('input', handler);
+  el.addEventListener('change', handler);
+}
+
+bind('brandName', v => patch({ brand: { name: v } }));
+bind('accent',    v => { document.documentElement.style.setProperty('--accent', v); patch({ brand: { accent: v } }); });
+bind('accent2',   v => patch({ brand: { accent2: v } }));
+bind('bg1',       v => patch({ brand: { bg1: v } }));
+bind('bg2',       v => patch({ brand: { bg2: v } }));
+bind('intensity', v => patch({ brand: { intensity: Number(v) } }));
+
+bind('sKicker', v => patch({ scenes: { [scene]: { kicker: v } } }));
+bind('sTitle',  v => patch({ scenes: { [scene]: { title: v } } }));
+bind('sNote',   v => patch({ scenes: { [scene]: { note: v } } }));
+
+bind('cdLabel', v => patch({ countdown: { label: v } }));
+bind('socialsLabel', v => patch({ socialsLabel: v }));
+
+bind('camLabel',   v => patch({ ingame: { camLabel: v } }));
+bind('nowPlaying', v => patch({ ingame: { nowPlaying: v } }));
+bind('ticker',     v => patch({ ingame: { ticker: v } }));
+bind('showCam',    v => patch({ ingame: { showCam: v } }));
+bind('showClock',  v => patch({ ingame: { showClock: v } }));
+bind('showTicker', v => patch({ ingame: { showTicker: v } }));
+
+bind('talkTitle',  v => patch({ talking: { title: v } }));
+bind('talkTopics', v => patch({ talking: { topics: v.split('\n').map(s => s.trim()).filter(Boolean) } }));
+
+bind('alertDur', v => patch({ alerts: { duration: Number(v) } }));
+bind('alertPos', v => patch({ alerts: { position: v } }));
+bind('msgFollow',   v => patch({ alerts: { messages: { follow: v } } }));
+bind('msgSub',      v => patch({ alerts: { messages: { sub: v } } }));
+bind('msgDonation', v => patch({ alerts: { messages: { donation: v } } }));
+bind('msgRaid',     v => patch({ alerts: { messages: { raid: v } } }));
+
+/* ------------------------------------------------------------- abas cena */
+$('sceneTabs').addEventListener('click', ev => {
+  const btn = ev.target.closest('.tab');
+  if (!btn) return;
+  scene = btn.dataset.scene;
+  [...$('sceneTabs').children].forEach(b => b.classList.toggle('on', b === btn));
+  fillForm();
+});
+
+/* ---------------------------------------------------------- redes sociais */
+const ICONS = ['twitch','youtube','instagram','tiktok','x','discord','kick','site'];
+
+function renderSocialRows() {
+  const list = state.socials || [];
+  $('socials').innerHTML = list.map((s, i) => `
+    <div class="social-row">
+      <input type="checkbox" data-i="${i}" data-k="show" ${s.show !== false ? 'checked' : ''}>
+      <select data-i="${i}" data-k="icon">
+        ${ICONS.map(ic => `<option ${ic === s.icon ? 'selected' : ''}>${ic}</option>`).join('')}
+      </select>
+      <input type="text" data-i="${i}" data-k="handle" value="${(s.handle || '').replace(/"/g, '&quot;')}">
+      <button class="ghost danger" data-del="${i}">✕</button>
+    </div>`).join('');
+}
+
+$('socials').addEventListener('input', ev => {
+  const el = ev.target;
+  if (el.dataset.i === undefined) return;
+  const i = Number(el.dataset.i);
+  const list = JSON.parse(JSON.stringify(state.socials || []));
+  list[i][el.dataset.k] = el.type === 'checkbox' ? el.checked : el.value;
+  patch({ socials: list });
+});
+
+$('socials').addEventListener('click', ev => {
+  const del = ev.target.dataset.del;
+  if (del === undefined) return;
+  const list = (state.socials || []).filter((_, i) => i !== Number(del));
+  patch({ socials: list });
+  renderSocialRows();
+});
+
+$('addSocial').onclick = () => {
+  const list = [...(state.socials || []), { icon: 'site', handle: 'seusite.com', show: true }];
+  patch({ socials: list });
+  renderSocialRows();
+};
+
+/* ------------------------------------------------------------- countdown */
+function countdown(minutes) {
+  fetch('/api/countdown', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ minutes })
+  });
+}
+$('cdStart').onclick = () => countdown(Number($('cdMin').value) || 0);
+$('cdStop').onclick = () => countdown(0);
+['cd5','cd10','cd15'].forEach(id => {
+  $(id).onclick = () => { $('cdMin').value = $(id).dataset.min; countdown(Number($(id).dataset.min)); };
+});
+
+/* ---------------------------------------------------------------- alertas */
+document.querySelectorAll('[data-alert]').forEach(btn => {
+  btn.onclick = () => fetch('/api/alert', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      type: btn.dataset.alert,
+      user: 'fulano_teste',
+      amount: btn.dataset.alert === 'donation' ? 'R$ 20,00' : '42'
+    })
+  });
+});
+
+/* --------------------------------------------------------------- paletas */
+const PALETTES = [
+  { n: 'Pure azul',  accent: '#2f7dff', accent2: '#6fd2ff', bg1: '#050a16', bg2: '#0d2f6b' },
+  { n: 'Roxo',       accent: '#8b5cf6', accent2: '#c4b5fd', bg1: '#0a0614', bg2: '#3b1a6b' },
+  { n: 'Verde',      accent: '#14c27a', accent2: '#7ef0bd', bg1: '#03130d', bg2: '#0a5c3c' },
+  { n: 'Vermelho',   accent: '#ef3b4e', accent2: '#ff9aa4', bg1: '#140406', bg2: '#6b1420' },
+  { n: 'Âmbar',      accent: '#f59e0b', accent2: '#fcd34d', bg1: '#140d02', bg2: '#6b4310' },
+  { n: 'Ciano',      accent: '#06b6d4', accent2: '#67e8f9', bg1: '#031014', bg2: '#0a4c5c' }
+];
+$('palettes').innerHTML = PALETTES.map((p, i) =>
+  `<button class="tab" data-pal="${i}" style="border-color:${p.accent}">${p.n}</button>`).join('');
+$('palettes').addEventListener('click', ev => {
+  const i = ev.target.dataset.pal;
+  if (i === undefined) return;
+  const { n, ...colors } = PALETTES[Number(i)];
+  patch({ brand: colors });
+  fillForm();
+});
+
+/* --------------------------------------------------------------- preview */
+const iframe = $('preview');
+function setPreview(src) { iframe.src = src; }
+setPreview('overlay/fullscreen.html?scene=starting');
+
+$('previewTabs').addEventListener('click', ev => {
+  const btn = ev.target.closest('.tab');
+  if (!btn) return;
+  [...$('previewTabs').children].forEach(b => b.classList.toggle('on', b === btn));
+  setPreview(btn.dataset.src);
+});
+
+function scalePreview() {
+  const w = $('frameWrap').clientWidth;
+  iframe.style.transform = `scale(${w / 1920})`;
+}
+new ResizeObserver(scalePreview).observe($('frameWrap'));
+scalePreview();
+
+/* ------------------------------------------------------------------ URLs */
+const BASE = location.origin;
+const URLS = [
+  ['Começando', '/overlay/fullscreen.html?scene=starting'],
+  ['Volto já',  '/overlay/fullscreen.html?scene=brb'],
+  ['Encerrando','/overlay/fullscreen.html?scene=ending'],
+  ['In-game',   '/overlay/ingame.html'],
+  ['Papo',      '/overlay/talking.html'],
+  ['Alertas',   '/overlay/alerts.html']
+];
+$('urls').innerHTML = URLS.map(([name, path]) =>
+  `<div class="url"><b>${name}</b><code>${BASE}${path}</code>
+     <button class="ghost" data-copy="${BASE}${path}">copiar</button></div>`).join('');
+$('urls').addEventListener('click', ev => {
+  const url = ev.target.dataset.copy;
+  if (!url) return;
+  navigator.clipboard.writeText(url).then(() => {
+    ev.target.textContent = 'copiado!';
+    setTimeout(() => { ev.target.textContent = 'copiar'; }, 1200);
+  });
+});
+
+$('curlHint').textContent =
+  `curl -X POST ${BASE}/api/alert -H 'Content-Type: application/json' -d '{"type":"follow","user":"fulano"}'`;
+
+/* ---------------------------------------------------------------- reset */
+$('reset').onclick = async () => {
+  const defaults = await fetch('/state.default.json').then(r => r.json());
+  patch(defaults);
+  fillForm();
+};
+</script>
+</body>
+</html>

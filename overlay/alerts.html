@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Stream Kit — alertas</title>
+<link rel="stylesheet" href="shared/base.css">
+<link rel="stylesheet" href="shared/scenes.css">
+</head>
+<body>
+
+  <div class="alert-host" id="host" data-pos="top"></div>
+
+<script type="module">
+import { connect, onAlert, getState, escapeHtml } from './shared/bus.js';
+import { alertIcon } from './shared/icons.js';
+
+const host = document.getElementById('host');
+const queue = [];
+let playing = false;
+
+const KIND_LABEL = {
+  follow: 'NOVO SEGUIDOR',
+  sub: 'NOVA ASSINATURA',
+  donation: 'DOAÇÃO',
+  raid: 'RAID'
+};
+
+connect(state => {
+  host.dataset.pos = (state.alerts && state.alerts.position) || 'top';
+});
+
+onAlert(payload => { queue.push(payload); pump(); });
+
+function pump() {
+  if (playing || !queue.length) return;
+  playing = true;
+  const a = queue.shift();
+  const cfg = getState().alerts || {};
+  const template = (cfg.messages && cfg.messages[a.type]) || '{user}';
+  const text = template
+    .replace('{user}', `<b>${escapeHtml(a.user || 'alguém')}</b>`)
+    .replace('{amount}', `<b>${escapeHtml(a.amount || '')}</b>`);
+
+  const el = document.createElement('div');
+  el.className = 'alert';
+  el.innerHTML = `
+    <div class="alert__icon">${alertIcon(a.type)}</div>
+    <div class="alert__text">
+      <span class="alert__kind">${KIND_LABEL[a.type] || 'AVISO'}</span>
+      ${text}
+    </div>`;
+  host.appendChild(el);
+
+  // som opcional: coloque um arquivo em overlay/shared/sounds/ e passe
+  // "sound": "shared/sounds/alert.mp3" no POST /api/alert
+  if (a.sound) {
+    try { new Audio(a.sound).play().catch(() => {}); } catch (_) {}
+  }
+
+  const duration = a.duration || cfg.duration || 5000;
+  setTimeout(() => {
+    el.classList.add('out');
+    setTimeout(() => {
+      el.remove();
+      playing = false;
+      pump();
+    }, 450);
+  }, duration);
+}
+</script>
+</body>
+</html>

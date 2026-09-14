@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Stream Kit — tela cheia</title>
+<link rel="stylesheet" href="shared/base.css">
+</head>
+<body class="opaque">
+
+  <div class="bg" id="bg">
+    <div class="bg__base"></div>
+    <div class="bg__glow"></div>
+    <div class="bg__vignette"></div>
+  </div>
+
+  <div class="brandmark" data-brand-name></div>
+
+  <main class="stage">
+    <div class="kicker" id="kicker"></div>
+    <h1 class="title" id="title"></h1>
+    <div class="note" id="note"></div>
+
+    <div class="countdown" id="cd">
+      <div class="countdown__label" id="cdLabel"></div>
+      <div class="countdown__value" id="cdValue">00:00</div>
+    </div>
+  </main>
+
+  <div class="socials-block">
+    <div class="socials-block__label" data-socials-label></div>
+    <div class="socials" id="socials"></div>
+  </div>
+
+<script type="module">
+import { connect, renderSocials, startCountdown, buildBackground } from './shared/bus.js';
+
+const scene = new URLSearchParams(location.search).get('scene') || 'starting';
+
+buildBackground(document.getElementById('bg'));
+
+const kicker = document.getElementById('kicker');
+const title  = document.getElementById('title');
+const note   = document.getElementById('note');
+
+// Reanima o texto quando ele muda (para a troca ao vivo ter vida)
+function setText(el, value) {
+  const text = value || '';
+  if (el.textContent === text) return;
+  el.textContent = text;
+  el.classList.toggle('hidden', !text);
+  el.style.animation = 'none';
+  void el.offsetWidth;
+  el.style.animation = '';
+}
+
+// Ajusta o tamanho do título para nunca estourar a largura da tela
+function fitTitle() {
+  title.style.fontSize = '';
+  let size = 210;
+  const max = 1560;
+  while (title.scrollWidth > max && size > 60) {
+    size -= 6;
+    title.style.fontSize = size + 'px';
+  }
+}
+
+connect(state => {
+  const data = (state.scenes && state.scenes[scene]) || {};
+  setText(kicker, data.kicker);
+  setText(title, data.title);
+  setText(note, data.note);
+  renderSocials(document.getElementById('socials'), state);
+  requestAnimationFrame(fitTitle);
+});
+
+startCountdown(
+  document.getElementById('cd'),
+  document.getElementById('cdValue'),
+  document.getElementById('cdLabel')
+);
+
+document.fonts && document.fonts.ready.then(fitTitle);
+</script>
+</body>
+</html>
