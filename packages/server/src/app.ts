@@ -16,6 +16,7 @@ import type { StateStore } from './state-store.js';
 import { attachClient } from './ws-handler.js';
 import { listOverlayUrls } from './urls.js';
 import { listarSons } from './sounds.js';
+import { listarIcones } from './icons.js';
 import { validateEvent, validateMinutes, validatePatch } from './validate.js';
 
 export interface StaticRoots {
@@ -25,6 +26,8 @@ export interface StaticRoots {
   readonly panel?: string;
   /** Pasta de sons do usuario, servida em /sons. */
   readonly sounds?: string;
+  /** Pasta de icones do usuario, servida em /icones. */
+  readonly icons?: string;
 }
 
 export interface AppOptions {
@@ -92,6 +95,15 @@ export async function createApp(options: AppOptions): Promise<App> {
     });
   }
 
+  const iconsRoot = options.staticRoots?.icons;
+  if (iconsRoot !== undefined && existsSync(iconsRoot)) {
+    await fastify.register(fastifyStatic, {
+      root: iconsRoot,
+      prefix: '/icones/',
+      decorateReply: false,
+    });
+  }
+
   const panelRoot = options.staticRoots?.panel;
   if (panelRoot !== undefined && existsSync(panelRoot)) {
     await fastify.register(fastifyStatic, {
@@ -122,6 +134,15 @@ export async function createApp(options: AppOptions): Promise<App> {
       return { sounds: listarSons(await readdir(soundsRoot)) };
     } catch {
       return { sounds: [] };
+    }
+  });
+
+  fastify.get('/api/icons', async () => {
+    if (iconsRoot === undefined || !existsSync(iconsRoot)) return { icons: [] };
+    try {
+      return { icons: listarIcones(await readdir(iconsRoot)) };
+    } catch {
+      return { icons: [] };
     }
   });
 

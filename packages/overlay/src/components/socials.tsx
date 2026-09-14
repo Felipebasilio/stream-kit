@@ -1,6 +1,7 @@
 import type { Social, StreamKitState } from '@stream-kit/types';
 import { useEffect, useState, type JSX } from 'react';
 
+import { resolverIcone } from './icon-file.js';
 import { IconeRede } from './icons.js';
 
 export function visiveis(state: StreamKitState): readonly Social[] {
@@ -8,13 +9,14 @@ export function visiveis(state: StreamKitState): readonly Social[] {
 }
 
 function Rede({ rede, ativa }: { rede: Social; ativa?: boolean }): JSX.Element {
+  const arquivo = rede.iconFile === undefined ? '' : resolverIcone(rede.iconFile);
   return (
     <div className={ativa === undefined ? 'rede' : `rede${ativa ? ' rede--ativa' : ''}`}>
       <div className="rede__icone">
-        {rede.iconFile === undefined ? (
+        {arquivo.length === 0 ? (
           <IconeRede icone={rede.icon} />
         ) : (
-          <img src={rede.iconFile} alt="" />
+          <img src={arquivo} alt="" />
         )}
       </div>
       <div className="rede__arroba">{rede.handle}</div>

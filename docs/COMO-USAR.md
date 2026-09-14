@@ -60,7 +60,8 @@ Três peças, uma responsabilidade cada:
 ```
 ~/Library/Application Support/StreamKit/
 ├── state.json      todas as suas configurações
-└── sons/           seus arquivos de áudio para os alertas
+├── sons/           seus arquivos de áudio para os alertas
+└── icones/         seus ícones de rede social
 ```
 
 **Fora do app, de propósito.** Trocar a versão do Stream Kit não mexe em nada
@@ -122,10 +123,26 @@ acerta o número, e as cenas nunca dessincronizam entre si.
 
 ### Redes sociais
 
-A caixinha liga e desliga cada rede. Os ícones que acompanham o app são
-**genéricos** — os logos oficiais são marca registrada e cada plataforma tem
-sua própria regra de uso. Para usar os logos de verdade, baixe o SVG na página
-de imprensa da plataforma e aponte o campo `iconFile` no `state.json`.
+A caixinha liga e desliga cada rede, o `@` é o texto que aparece, e a última
+coluna escolhe o ícone.
+
+Os ícones que acompanham o app são **genéricos** — o do TikTok é uma nota
+musical, não o logo. Isso é decisão de projeto: os logos oficiais são marca
+registrada, cada plataforma tem sua regra de uso, e um app que distribui isso
+embutido cria um problema que não precisa existir.
+
+Para usar o logo de verdade:
+
+1. Baixe o SVG (ou PNG) na página de imprensa da plataforma — as marcas
+   grandes têm uma: procure por "brand assets" ou "kit de imprensa"
+2. Copie o arquivo para `~/Library/Application Support/StreamKit/icones/`
+3. Recarregue o painel
+4. Na linha da rede, escolha o arquivo na coluna do ícone
+
+Vale saber: o arquivo é desenhado **do jeito que ele é**. Os ícones embutidos
+ficam brancos porque o app pinta; um SVG seu chega com as cores dele. Como a
+barra é escura, prefira uma versão clara, quadrada e com fundo transparente —
+a versão "monocromática branca" do kit de imprensa costuma ser exatamente essa.
 
 ### Overlay in-game
 

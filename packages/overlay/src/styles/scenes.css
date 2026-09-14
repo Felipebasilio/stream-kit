@@ -136,7 +136,15 @@
 .rede__icone img {
   width: calc(26 * var(--u));
   height: calc(26 * var(--u));
+}
+.rede__icone svg {
   fill: #fff;
+}
+/* `fill` nao alcanca o conteudo de um <img>: o SVG do usuario chega com as
+   cores dele. `contain` so garante que um arquivo fora do quadrado nao
+   distorca. */
+.rede__icone img {
+  object-fit: contain;
 }
 
 .rede__arroba {

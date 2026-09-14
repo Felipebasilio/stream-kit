@@ -42,7 +42,10 @@ export interface Social {
   handle: string;
   show: boolean;
   /**
-   * Caminho para um SVG do usuario, relativo a pasta de assets.
+   * Nome do arquivo de imagem dentro da pasta de icones do usuario, servida
+   * em `/icones`. Um caminho ou URL tambem funciona, para quem escreveu a mao
+   * no `state.json` antes de a pasta existir.
+   *
    * Opcional porque os icones que acompanham o app sao genericos de
    * proposito — logos oficiais sao marca registrada de cada plataforma.
    */

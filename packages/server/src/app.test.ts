@@ -254,6 +254,39 @@ describe('GET /api/sounds', () => {
   });
 });
 
+describe('GET /api/icons', () => {
+  it('sem pasta configurada devolve lista vazia', async () => {
+    const r = await app.fastify.inject({ method: 'GET', url: '/api/icons' });
+    expect(r.json()).toEqual({ icons: [] });
+  });
+
+  it('pasta inexistente devolve lista vazia em vez de erro', async () => {
+    const outro = await createApp({ store, staticRoots: { icons: '/nao/existe' } });
+    const r = await outro.fastify.inject({ method: 'GET', url: '/api/icons' });
+    expect(r.json()).toEqual({ icons: [] });
+    await outro.fastify.close();
+  });
+
+  it('lista os arquivos de imagem da pasta do usuario', async () => {
+    const pasta = await mkdtemp(join(tmpdir(), 'icones-'));
+    await writeFile(join(pasta, 'tiktok.svg'), '<svg/>');
+    await writeFile(join(pasta, 'leia-me.txt'), 'x');
+    const outro = await createApp({ store, staticRoots: { icons: pasta } });
+    const r = await outro.fastify.inject({ method: 'GET', url: '/api/icons' });
+    expect(r.json()).toEqual({ icons: ['tiktok.svg'] });
+    await outro.fastify.close();
+  });
+
+  it('serve o arquivo de icone em /icones', async () => {
+    const pasta = await mkdtemp(join(tmpdir(), 'icones-'));
+    await writeFile(join(pasta, 'tiktok.svg'), '<svg/>');
+    const outro = await createApp({ store, staticRoots: { icons: pasta } });
+    const r = await outro.fastify.inject({ method: 'GET', url: '/icones/tiktok.svg' });
+    expect(r.statusCode).toBe(200);
+    await outro.fastify.close();
+  });
+});
+
 describe('arquivos estaticos', () => {
   const raizOverlay = new URL('../../overlay/dist', import.meta.url).pathname;
 
