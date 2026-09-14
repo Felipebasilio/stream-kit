@@ -144,6 +144,11 @@ não couber, em vez de vazar por cima da barra.
 
 Textos, duração, posição e volume por tipo de evento.
 
+As cenas de **Alertas** e **Som** aparecem vazias na prévia porque só reagem a
+eventos. Clique num botão **Testar** e o alerta aparece — na prévia e no OBS.
+Hoje a única fonte de eventos são esses botões: a integração com a Kick está
+parqueada.
+
 Sem arquivo escolhido, o app toca um **tom sintetizado**: nada de áudio é
 embarcado, para não criar problema de direito autoral, e mesmo assim o alerta
 não nasce mudo. Para usar sons seus, ponha os arquivos em

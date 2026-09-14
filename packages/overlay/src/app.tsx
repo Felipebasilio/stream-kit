@@ -1,5 +1,5 @@
 import { SCENE_IDS, type SceneId } from '@stream-kit/types';
-import type { JSX } from 'react';
+import { useEffect, type JSX } from 'react';
 
 import { AreasSeguras } from './components/background.js';
 import { readEditModeFromUrl, readHoldFromUrl, readSceneFromUrl } from './canvas/url.js';
@@ -24,6 +24,13 @@ export function App({ search }: { search: string }): JSX.Element {
   const segurar = readHoldFromUrl(search);
   const { state, evento, gatilhoTransicao } = useStreamState();
   useBrand(state.brand);
+
+  // Marca a raiz para o CSS saber que esta em edicao. E o que faz o aviso da
+  // cena de som aparecer na previa e nunca na transmissao.
+  useEffect(() => {
+    if (edicao) document.documentElement.dataset['edicao'] = '1';
+    else delete document.documentElement.dataset['edicao'];
+  }, [edicao]);
 
   const conteudo = ehCenaDeTexto(cena) ? (
     <TelaCheia scene={cena} state={state} canvas={canvas} />

@@ -722,16 +722,32 @@
 }
 
 /* A cena de som nao mostra nada na transmissao. */
+/*
+ * A cena de som e INVISIVEL na transmissao.
+ *
+ * Ela tinha fundo opaco e um texto explicativo no centro. Como ajuda na
+ * previa do painel isso parecia bom — mas no OBS a fonte de navegador desenha
+ * exatamente o que esta na pagina, ou seja, uma caixa escura cobrindo a live
+ * inteira com uma frase no meio dela. O aviso agora so aparece no modo de
+ * edicao, que a previa liga sozinha e a transmissao nunca usa.
+ */
 .cena--som {
   display: grid;
   place-items: center;
-  background: #0a0f1c;
+  background: transparent;
 }
 .cena--som__aviso {
+  display: none;
   font-size: calc(26 * var(--u));
   color: rgba(255, 255, 255, 0.35);
   text-align: center;
   padding: calc(40 * var(--u));
+}
+:root[data-edicao='1'] .cena--som {
+  background: rgba(10, 15, 28, 0.9);
+}
+:root[data-edicao='1'] .cena--som__aviso {
+  display: block;
 }
 
 /* Congelamento para a captura quadro a quadro do gerador de stinger. */

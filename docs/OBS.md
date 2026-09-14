@@ -117,17 +117,30 @@ Jeito mais rápido: ligue as **Guias** na prévia do painel, ou abra a cena com
 `starting`, `brb` e `ending` pintam o fundo inteiro. Elas substituem a cena —
 não precisa de mais nada embaixo, a não ser uma música.
 
-### Alertas e som
+### Alertas e som — as duas cenas que parecem vazias
 
-**Alertas** (`scene=alerts`) tem fundo transparente. Adicione em todas as cenas
-onde você quer que o alerta possa aparecer, sempre no topo da lista.
+Elas **são** vazias, e isso é o certo. As duas reagem a eventos: só existe algo
+para mostrar ou tocar quando um evento acontece.
 
-Dica: no OBS, crie uma cena chamada `Alertas` com só essa fonte, e use
-**Fontes → + → Cena** para inseri-la nas outras. Assim existe uma cópia só, e
-mexer nela conserta todas.
+Na prévia do painel elas aparecem em branco porque nada está acontecendo. Clique
+em **Testar doação** na seção Alertas e o alerta aparece na hora, inclusive
+dentro do OBS.
 
-**Som** (`scene=audio`) não mostra nada — só toca. Adicione uma vez, na cena
-principal, e deixe numa trilha de áudio própria.
+**Alertas** (`scene=alerts`) é uma camada transparente. Adicione em todas as
+cenas onde o alerta pode aparecer, sempre no topo da lista.
+
+> Dica: crie no OBS uma cena chamada `Alertas` com só essa fonte e use
+> **Fontes → + → Cena** para inseri-la nas outras. Uma cópia só, e mexer nela
+> conserta todas.
+
+**Som** (`scene=audio`) não desenha absolutamente nada — só toca. Adicione uma
+vez, na cena principal, e deixe numa trilha de áudio própria para conseguir
+aplicar o sidechain.
+
+**De onde vêm os eventos hoje:** só dos botões de teste do painel. A integração
+com a Kick está parqueada (veja o plano 90). Enquanto isso, essas duas cenas
+servem para você deixar tudo montado e testado — e para agradecer manualmente
+quem mandou algo por fora, como um PIX.
 
 ---
 

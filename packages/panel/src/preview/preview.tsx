@@ -43,7 +43,10 @@ export function Previa({
     };
   }, [spec, celular]);
 
-  const src = `/overlay/?scene=${cena}&canvas=${canvas}${guias ? '&edit=1' : ''}`;
+  // A cena de som e invisivel de proposito. Na previa ligamos o modo de edicao
+  // para ela se explicar; na transmissao esse parametro nunca existe.
+  const precisaExplicar = cena === 'audio';
+  const src = `/overlay/?scene=${cena}&canvas=${canvas}${guias || precisaExplicar ? '&edit=1' : ''}`;
 
   return (
     <div className="previa-caixa">
@@ -106,9 +109,13 @@ export function Previa({
       </div>
 
       <p className="dica">
-        {celular
-          ? 'É assim que a cena chega para quem assiste no telefone. Se não dá para ler aqui, não dá para ler lá.'
-          : 'O xadrez é transparência — nessas áreas o OBS mostra o que está atrás.'}
+        {cena === 'audio'
+          ? 'Esta cena não desenha nada — ela só toca o som dos alertas. O aviso acima aparece só aqui na prévia. Adicione no OBS e deixe numa trilha de áudio própria.'
+          : cena === 'alerts'
+            ? 'Vazia até chegar um evento. Clique num botão "Testar" na seção Alertas para ver o alerta aparecer aqui.'
+            : celular
+              ? 'É assim que a cena chega para quem assiste no telefone. Se não dá para ler aqui, não dá para ler lá.'
+              : 'O xadrez é transparência — nessas áreas o OBS mostra o que está atrás.'}
       </p>
     </div>
   );

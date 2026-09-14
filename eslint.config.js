@@ -2,7 +2,19 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '**/coverage/**', 'legacy-python/**', 'node_modules/**'] },
+  {
+    ignores: [
+      '**/dist/**',
+      '**/dist-types/**',
+      '**/coverage/**',
+      // Saida do empacotamento: contem o bundle ja minificado das cenas, que
+      // nao e codigo nosso para revisar.
+      '**/release/**',
+      '**/capturas/**',
+      'legacy-python/**',
+      'node_modules/**',
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
