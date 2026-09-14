@@ -37,14 +37,14 @@ contra a chave pública embutida e substitui. Não depende da Apple.
 
 ## Três caminhos
 
-| | A. Electron + aviso | B. Tauri + atualizador próprio | C. Electron + assinatura |
-|---|---|---|---|
-| Atualização | manual, com aviso no app | automática | automática |
-| Custo | zero | zero | US$ 99/ano |
-| Node embutido | sim, nativo | não — precisa de *sidecar* | sim |
-| Complexidade de build | baixa | média (Rust + sidecar) | baixa |
-| Código sensível nosso | nenhum | nenhum | nenhum |
-| Gatekeeper na instalação | avisa | avisa | não avisa |
+|                          | A. Electron + aviso      | B. Tauri + atualizador próprio | C. Electron + assinatura |
+| ------------------------ | ------------------------ | ------------------------------ | ------------------------ |
+| Atualização              | manual, com aviso no app | automática                     | automática               |
+| Custo                    | zero                     | zero                           | US$ 99/ano               |
+| Node embutido            | sim, nativo              | não — precisa de _sidecar_     | sim                      |
+| Complexidade de build    | baixa                    | média (Rust + sidecar)         | baixa                    |
+| Código sensível nosso    | nenhum                   | nenhum                         | nenhum                   |
+| Gatekeeper na instalação | avisa                    | avisa                          | não avisa                |
 
 ### Recomendação: comece pelo A
 
@@ -82,7 +82,7 @@ Começamos pelo 1. O 2 entra junto com o B ou C, se chegarmos lá.
 ## Sobre o Gatekeeper
 
 App não assinado: na primeira abertura o macOS bloqueia. O contorno é clicar
-com o botão direito no app e escolher *Abrir*, e depois confirmar. Uma vez por
+com o botão direito no app e escolher _Abrir_, e depois confirmar. Uma vez por
 instalação.
 
 Isso vai no LEIA-ME com print. É a parte feia da decisão D6 e é melhor você

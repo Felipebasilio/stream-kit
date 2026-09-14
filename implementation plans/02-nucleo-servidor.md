@@ -8,11 +8,11 @@
 
 ## Escolhas
 
-| Item | Escolha | Alternativa descartada |
-|---|---|---|
-| HTTP | Fastify | `node:http` puro — testável demais na mão |
-| Tempo real | WebSocket (`ws`) | SSE — unidirecional, e o painel vai precisar receber |
-| Persistência | JSON em disco, escrita atômica | SQLite — peso desnecessário para um objeto |
+| Item         | Escolha                        | Alternativa descartada                               |
+| ------------ | ------------------------------ | ---------------------------------------------------- |
+| HTTP         | Fastify                        | `node:http` puro — testável demais na mão            |
+| Tempo real   | WebSocket (`ws`)               | SSE — unidirecional, e o painel vai precisar receber |
+| Persistência | JSON em disco, escrita atômica | SQLite — peso desnecessário para um objeto           |
 
 ### Por que WebSocket e não SSE
 
@@ -26,8 +26,8 @@ eventos de plataforma. Bidirecional agora evita reescrever depois.
 
 **`StateStore`** — dono do estado.
 Aplica patch, persiste com escrita atômica (`tmp` + `rename`), emite para os
-assinantes. Grava com *debounce* para não escrever em disco a cada tecla.
-Nunca perde a última escrita: ao encerrar, faz *flush*.
+assinantes. Grava com _debounce_ para não escrever em disco a cada tecla.
+Nunca perde a última escrita: ao encerrar, faz _flush_.
 
 **`Hub`** — registro de conexões.
 Assinantes tipados por papel (`overlay` ou `panel`). Envio com backpressure:

@@ -38,17 +38,17 @@ tem teste dedicado.
 
 ## Funcionalidades
 
-| Seção | O que faz |
-|---|---|
-| Identidade | nome, 4 cores, paletas prontas, intensidade, fonte |
-| Cenas | textos das telas cheias, por cena |
-| Contagem | rótulo, minutos, atalhos de 5/10/15, parar |
-| Redes | ligar, desligar, reordenar por arrastar, trocar @ |
-| In-game | etiqueta, jogando agora, letreiro, o que mostrar |
-| Papo | título e tópicos |
-| Alertas | textos, duração, posição, disparo manual |
-| Presets | salvar identidade inteira com nome, trocar num clique |
-| Preview | seletor de canvas, guias de área segura, régua de 360px |
+| Seção      | O que faz                                               |
+| ---------- | ------------------------------------------------------- |
+| Identidade | nome, 4 cores, paletas prontas, intensidade, fonte      |
+| Cenas      | textos das telas cheias, por cena                       |
+| Contagem   | rótulo, minutos, atalhos de 5/10/15, parar              |
+| Redes      | ligar, desligar, reordenar por arrastar, trocar @       |
+| In-game    | etiqueta, jogando agora, letreiro, o que mostrar        |
+| Papo       | título e tópicos                                        |
+| Alertas    | textos, duração, posição, disparo manual                |
+| Presets    | salvar identidade inteira com nome, trocar num clique   |
+| Preview    | seletor de canvas, guias de área segura, régua de 360px |
 
 **Desfazer e refazer** com `Cmd+Z` / `Cmd+Shift+Z`, com histórico de 50 passos.
 

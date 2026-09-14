@@ -37,14 +37,14 @@ sistema de arquivos, é o que dá para cobrir a 95% sem dor.
 
 ## Ferramentas
 
-| Papel | Escolha | Por quê |
-|---|---|---|
-| Workspace | pnpm workspaces | rápido, sem hoisting confuso |
-| Linguagem | TypeScript `strict` | `strict` desde o dia zero; ligar depois é penoso |
-| Teste | Vitest | mesma configuração do Vite, sem duplicar build |
-| Cobertura | `@vitest/coverage-v8` | thresholds que falham o comando |
-| Visual e E2E | Playwright | já usado para validar as cenas |
-| Lint | ESLint + Prettier | sem discussão de estilo em revisão |
+| Papel        | Escolha               | Por quê                                          |
+| ------------ | --------------------- | ------------------------------------------------ |
+| Workspace    | pnpm workspaces       | rápido, sem hoisting confuso                     |
+| Linguagem    | TypeScript `strict`   | `strict` desde o dia zero; ligar depois é penoso |
+| Teste        | Vitest                | mesma configuração do Vite, sem duplicar build   |
+| Cobertura    | `@vitest/coverage-v8` | thresholds que falham o comando                  |
+| Visual e E2E | Playwright            | já usado para validar as cenas                   |
+| Lint         | ESLint + Prettier     | sem discussão de estilo em revisão               |
 
 ---
 
@@ -59,14 +59,14 @@ sistema de arquivos, é o que dá para cobrir a 95% sem dor.
 - **`StreamEvent`** — o modelo normalizado que entra agora sem adaptador:
   ```ts
   type StreamEvent = {
-    id: string            // idempotência
-    platform: Platform    // 'manual' por enquanto
-    kind: 'follow' | 'sub' | 'donation' | 'raid' | 'chat'
-    user: string
-    amount?: string
-    message?: string
-    at: number
-  }
+    id: string; // idempotência
+    platform: Platform; // 'manual' por enquanto
+    kind: 'follow' | 'sub' | 'donation' | 'raid' | 'chat';
+    user: string;
+    amount?: string;
+    message?: string;
+    at: number;
+  };
   ```
 - **`StatePatch`** — patch parcial profundo, tipado.
 - **`ServerMessage` / `ClientMessage`** — o protocolo do WebSocket.

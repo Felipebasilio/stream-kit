@@ -19,7 +19,9 @@ manter três folhas de estilo. A saída certa:
 ### Unidade relativa à altura
 
 ```css
-:root { --u: calc(var(--canvas-height) / 1000); }
+:root {
+  --u: calc(var(--canvas-height) / 1000);
+}
 ```
 
 Todo tamanho vira múltiplo de `--u`. Um título de `120u` mede 120px em 1080p e
@@ -59,11 +61,11 @@ tornar um overlay inútil.
 Os players cobrem partes do seu vídeo. Guias visíveis no modo de edição,
 invisíveis na transmissão:
 
-| Região | Quem cobre | Margem sugerida |
-|---|---|---|
-| Rodapé | controles do player | 8% da altura |
-| Topo direito | título e opções | 6% |
-| Lateral direita (vertical) | botões de interação | 15% da largura |
+| Região                     | Quem cobre          | Margem sugerida |
+| -------------------------- | ------------------- | --------------- |
+| Rodapé                     | controles do player | 8% da altura    |
+| Topo direito               | título e opções     | 6%              |
+| Lateral direita (vertical) | botões de interação | 15% da largura  |
 
 Nada essencial dentro dessas faixas. O sistema avisa em tempo de
 desenvolvimento quando um elemento invade.
@@ -85,12 +87,12 @@ O espectador nunca deve ver um aviso de erro nosso.
 
 Cada cena tem teto medido, não estimado:
 
-| Métrica | Teto |
-|---|---|
-| Tempo de script por frame | < 2ms |
-| Elementos animados simultâneos | ≤ 20 |
-| Propriedades animadas | só `transform` e `opacity` |
-| Repaint por segundo em repouso | 0 fora das animações |
+| Métrica                        | Teto                       |
+| ------------------------------ | -------------------------- |
+| Tempo de script por frame      | < 2ms                      |
+| Elementos animados simultâneos | ≤ 20                       |
+| Propriedades animadas          | só `transform` e `opacity` |
+| Repaint por segundo em repouso | 0 fora das animações       |
 
 Animar `left`, `width`, `box-shadow` ou `filter` está proibido: força layout ou
 paint a cada frame. Medido com o painel de desempenho, registrado no plano.

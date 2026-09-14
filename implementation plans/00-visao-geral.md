@@ -20,18 +20,18 @@ Toda decisão de escopo passa por essa pergunta.
 
 ## Decisões tomadas
 
-| # | Decisão | Escolha | Motivo |
-|---|---|---|---|
-| D1 | Linguagem | Node + TypeScript | Ecossistema de streaming, tipos compartilhados entre as três pontas |
-| D2 | Framework de UI | React + Vite | Painel tem muito estado de formulário; Vite dá hot reload no overlay |
-| D3 | Next.js | Descartado | SSR não ajuda: o overlay carrega uma vez e vive horas. Custo sem ganho |
-| D4 | Integração de plataforma | **Adiada** | Começar a transmitir já. Kick entra quando a audiência justificar |
-| D5 | Túnel vs relay | **Não se aplica agora** | Consequência de D4. Quando voltar: túnel + ouvinte dedicado (ver plano 90) |
-| D6 | Assinatura do app | Não assinado | Sem conta Apple Developer. Custo: aviso do Gatekeeper na instalação |
-| D7 | Canvas vertical no OBS | Aitum, por ora | Decisão do Felipe, reversível. Não é dependência do nosso código |
-| D8 | Resolução | Múltipla, sem layout duplicado | 2560x1440 e 1920x1080 horizontais, 1080x1920 vertical |
-| D9 | Métrica de teste | 95% no núcleo + screenshot nos overlays | Cobertura de linha em JSX de overlay não pega os bugs que doem |
-| D10 | Modelo de evento | Entra na fundação, sem adaptadores | Barato agora, caro de retrofitar depois |
+| #   | Decisão                  | Escolha                                 | Motivo                                                                     |
+| --- | ------------------------ | --------------------------------------- | -------------------------------------------------------------------------- |
+| D1  | Linguagem                | Node + TypeScript                       | Ecossistema de streaming, tipos compartilhados entre as três pontas        |
+| D2  | Framework de UI          | React + Vite                            | Painel tem muito estado de formulário; Vite dá hot reload no overlay       |
+| D3  | Next.js                  | Descartado                              | SSR não ajuda: o overlay carrega uma vez e vive horas. Custo sem ganho     |
+| D4  | Integração de plataforma | **Adiada**                              | Começar a transmitir já. Kick entra quando a audiência justificar          |
+| D5  | Túnel vs relay           | **Não se aplica agora**                 | Consequência de D4. Quando voltar: túnel + ouvinte dedicado (ver plano 90) |
+| D6  | Assinatura do app        | Não assinado                            | Sem conta Apple Developer. Custo: aviso do Gatekeeper na instalação        |
+| D7  | Canvas vertical no OBS   | Aitum, por ora                          | Decisão do Felipe, reversível. Não é dependência do nosso código           |
+| D8  | Resolução                | Múltipla, sem layout duplicado          | 2560x1440 e 1920x1080 horizontais, 1080x1920 vertical                      |
+| D9  | Métrica de teste         | 95% no núcleo + screenshot nos overlays | Cobertura de linha em JSX de overlay não pega os bugs que doem             |
+| D10 | Modelo de evento         | Entra na fundação, sem adaptadores      | Barato agora, caro de retrofitar depois                                    |
 
 ---
 
@@ -94,11 +94,11 @@ Uma etapa só está pronta quando **todos** os itens valem:
 
 ## Qualidade: as três camadas
 
-| Camada | O que cobre | Ferramenta | Alvo |
-|---|---|---|---|
-| Unitário | tipos, store, fila de eventos, normalização, reconexão | Vitest | ≥ 95% linha e branch |
-| Visual | cada cena, em cada resolução, em cada orientação | Playwright screenshot | zero diferença não aprovada |
-| Ponta a ponta | painel muda → overlay reflete | Playwright | fluxos principais |
+| Camada        | O que cobre                                            | Ferramenta            | Alvo                        |
+| ------------- | ------------------------------------------------------ | --------------------- | --------------------------- |
+| Unitário      | tipos, store, fila de eventos, normalização, reconexão | Vitest                | ≥ 95% linha e branch        |
+| Visual        | cada cena, em cada resolução, em cada orientação       | Playwright screenshot | zero diferença não aprovada |
+| Ponta a ponta | painel muda → overlay reflete                          | Playwright            | fluxos principais           |
 
 Cobertura de linha **não** se aplica a componente de apresentação. Overlay se
 mede por imagem.
@@ -119,15 +119,15 @@ mede por imagem.
 
 ## Ordem das etapas e o que cada uma entrega
 
-| Plano | Etapa | O que você ganha ao terminar |
-|---|---|---|
-| 01 | Fundação | Nada visível. Base tipada e testável |
-| 02 | Núcleo do servidor | Paridade com o Python, em Node |
-| 03 | Overlays e canvas | Cenas em 1440p e vertical, legíveis no celular |
-| 04 | Painel | Edição ao vivo com preview de verdade |
-| 05 | Transições e som | O salto de percepção de qualidade |
-| 06 | App de Mac | Clicar e abrir, sem terminal, com atualização |
-| 90 | Integração Kick | Parqueado. Retomar quando a audiência justificar |
+| Plano | Etapa              | O que você ganha ao terminar                     |
+| ----- | ------------------ | ------------------------------------------------ |
+| 01    | Fundação           | Nada visível. Base tipada e testável             |
+| 02    | Núcleo do servidor | Paridade com o Python, em Node                   |
+| 03    | Overlays e canvas  | Cenas em 1440p e vertical, legíveis no celular   |
+| 04    | Painel             | Edição ao vivo com preview de verdade            |
+| 05    | Transições e som   | O salto de percepção de qualidade                |
+| 06    | App de Mac         | Clicar e abrir, sem terminal, com atualização    |
+| 90    | Integração Kick    | Parqueado. Retomar quando a audiência justificar |
 
 **O kit Python continua funcionando durante toda a migração.** Use nas lives.
 Ele só sai de cena quando a etapa 03 estiver validada por você no OBS.

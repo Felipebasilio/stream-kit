@@ -1,5 +1,10 @@
 # Stream Kit Local
 
+> **Aviso:** esta é a versão em Python, que continua funcional e é a que você
+> deve usar nas lives por enquanto. Ela agora mora em `legacy-python/`, então
+> todos os comandos abaixo devem ser rodados **dentro dessa pasta**.
+> A versão em Node está sendo construída em `packages/`.
+
 Overlays de live 100% offline, no seu Mac, editáveis ao vivo.
 Zero dependência de plataforma online, zero mensalidade, tudo em português.
 
@@ -15,7 +20,7 @@ Descompacte a pasta em algum lugar fixo (ex.: `~/Documentos/stream-kit`) e:
 **Pelo Terminal:**
 
 ```bash
-cd ~/Documentos/stream-kit
+cd ~/Documents/Projetos/stream-kit/legacy-python
 chmod +x iniciar.command      # só na primeira vez
 python3 server.py
 ```

@@ -18,16 +18,16 @@ layout.
 
 ### Como funciona no OBS
 
-Uma transição entre cenas do OBS é um *stinger*: um vídeo com canal alfa que
+Uma transição entre cenas do OBS é um _stinger_: um vídeo com canal alfa que
 cobre a tela no meio da troca. O OBS suporta isso nativamente — a gente entrega
 o arquivo, ele faz a troca.
 
 Duas rotas possíveis:
 
-| Rota | Como | Vantagem | Desvantagem |
-|---|---|---|---|
-| **Stinger de vídeo** | gerar `.webm` alfa a partir das nossas animações | nativo do OBS, sem custo de CPU | precisa gerar arquivo, não muda ao vivo |
-| **Cena de transição** | uma fonte de navegador por cima que anima sob comando | segue as cores do painel ao vivo | exige coordenar com a troca de cena |
+| Rota                  | Como                                                  | Vantagem                         | Desvantagem                             |
+| --------------------- | ----------------------------------------------------- | -------------------------------- | --------------------------------------- |
+| **Stinger de vídeo**  | gerar `.webm` alfa a partir das nossas animações      | nativo do OBS, sem custo de CPU  | precisa gerar arquivo, não muda ao vivo |
+| **Cena de transição** | uma fonte de navegador por cima que anima sob comando | segue as cores do painel ao vivo | exige coordenar com a troca de cena     |
 
 **Decisão:** as duas. Stinger de vídeo para a troca de cena do OBS (é o caso
 comum e é o mais barato), e animação de entrada/saída dentro das cenas para
@@ -66,7 +66,7 @@ sem mexer no overlay.
 alertas em sequência não podem sobrepor áudio.
 
 **Ducking:** quando um alerta toca, a música de fundo abaixa. Isso não é nosso —
-é filtro de *sidechain* no OBS. Nossa parte é documentar como configurar, e
+é filtro de _sidechain_ no OBS. Nossa parte é documentar como configurar, e
 emitir o som num canal separado que permita isso.
 
 **Biblioteca:** o app aceita arquivos do usuário em pasta própria. Não vamos
