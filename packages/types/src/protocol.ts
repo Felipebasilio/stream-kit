@@ -14,6 +14,8 @@ export type ClientRole = 'overlay' | 'panel';
 export type ServerMessage =
   | { readonly type: 'state'; readonly state: StreamKitState }
   | { readonly type: 'event'; readonly event: StreamEvent }
+  /** Pede que as cenas toquem a transicao agora. */
+  | { readonly type: 'transition' }
   /** Confirma que o patch de `id` foi aplicado e persistido. */
   | { readonly type: 'ack'; readonly id: string }
   | { readonly type: 'error'; readonly id?: string; readonly message: string };
@@ -21,6 +23,7 @@ export type ServerMessage =
 export type ClientMessage =
   | { readonly type: 'patch'; readonly id: string; readonly patch: StatePatch }
   | { readonly type: 'event'; readonly event: StreamEvent }
+  | { readonly type: 'transition' }
   | { readonly type: 'ping' };
 
 export function isClientRole(value: unknown): value is ClientRole {

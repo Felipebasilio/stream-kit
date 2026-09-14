@@ -1,3 +1,7 @@
+import { mkdtemp, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
 import { EventQueue } from '@stream-kit/core';
 import { beforeEach, describe, expect, it } from 'vitest';
 
@@ -200,6 +204,53 @@ describe('POST /api/countdown', () => {
       payload: '{}',
     });
     expect(r.statusCode).toBe(400);
+  });
+});
+
+describe('POST /api/transition', () => {
+  it('dispara a transicao quando ela esta ligada', async () => {
+    const r = await app.fastify.inject({ method: 'POST', url: '/api/transition' });
+    expect(r.statusCode).toBe(200);
+    expect(r.json<{ enabled: boolean }>().enabled).toBe(true);
+  });
+
+  it('desligada no painel, nada e enviado para as cenas', async () => {
+    store.apply({ transition: { enabled: false } });
+    const r = await app.fastify.inject({ method: 'POST', url: '/api/transition' });
+    expect(r.json<{ enabled: boolean }>().enabled).toBe(false);
+  });
+});
+
+describe('GET /api/sounds', () => {
+  it('sem pasta configurada devolve lista vazia', async () => {
+    const r = await app.fastify.inject({ method: 'GET', url: '/api/sounds' });
+    expect(r.json()).toEqual({ sounds: [] });
+  });
+
+  it('pasta inexistente devolve lista vazia em vez de erro', async () => {
+    const outro = await createApp({ store, staticRoots: { sounds: '/nao/existe' } });
+    const r = await outro.fastify.inject({ method: 'GET', url: '/api/sounds' });
+    expect(r.json()).toEqual({ sounds: [] });
+    await outro.fastify.close();
+  });
+
+  it('lista os arquivos de audio da pasta do usuario', async () => {
+    const pasta = await mkdtemp(join(tmpdir(), 'sons-'));
+    await writeFile(join(pasta, 'alerta.mp3'), 'x');
+    await writeFile(join(pasta, 'leia-me.txt'), 'x');
+    const outro = await createApp({ store, staticRoots: { sounds: pasta } });
+    const r = await outro.fastify.inject({ method: 'GET', url: '/api/sounds' });
+    expect(r.json()).toEqual({ sounds: ['alerta.mp3'] });
+    await outro.fastify.close();
+  });
+
+  it('serve o arquivo de som em /sons', async () => {
+    const pasta = await mkdtemp(join(tmpdir(), 'sons-'));
+    await writeFile(join(pasta, 'alerta.mp3'), 'conteudo');
+    const outro = await createApp({ store, staticRoots: { sounds: pasta } });
+    const r = await outro.fastify.inject({ method: 'GET', url: '/sons/alerta.mp3' });
+    expect(r.statusCode).toBe(200);
+    await outro.fastify.close();
   });
 });
 

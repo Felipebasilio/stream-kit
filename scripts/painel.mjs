@@ -148,6 +148,89 @@ try {
     `${String(larguraRegua)}px`,
   );
 
+  // --- transicao ---------------------------------------------------------
+  await painel.getByRole('button', { name: '1920x1080' }).click();
+  await painel.waitForTimeout(300);
+  const cenaTransicao = await ctx.newPage();
+  await cenaTransicao.goto(`${BASE}/overlay/?scene=starting&canvas=hd`, {
+    waitUntil: 'load',
+  });
+  await cenaTransicao.waitForTimeout(600);
+
+  await painel.getByRole('button', { name: 'Tocar agora' }).click();
+  const apareceu = await cenaTransicao
+    .waitForSelector('.transicao', { timeout: 2000 })
+    .then(() => true)
+    .catch(() => false);
+  checar('transicao pedida no painel aparece na cena', apareceu);
+
+  await cenaTransicao.waitForTimeout(900);
+  const sumiu = (await cenaTransicao.locator('.transicao').count()) === 0;
+  checar('a transicao sai sozinha depois da duracao', sumiu);
+
+  // Desligada, nao deve aparecer: e o interruptor de emergencia no meio da live.
+  await painel.locator('#transicao-ligada').uncheck();
+  await painel.waitForTimeout(400);
+  await fetch(`${BASE}/api/transition`, { method: 'POST' });
+  await cenaTransicao.waitForTimeout(500);
+  checar(
+    'transicao desligada nao aparece',
+    (await cenaTransicao.locator('.transicao').count()) === 0,
+  );
+  await painel.locator('#transicao-ligada').check();
+  await painel.waitForTimeout(300);
+
+  // --- som ---------------------------------------------------------------
+  const cenaSom = await ctx.newPage();
+  await cenaSom.addInitScript(() => {
+    // Conta quantas vezes o app pediu para tocar um tom sintetizado.
+    window.__tons = 0;
+    const Original = window.AudioContext;
+    window.AudioContext = class extends Original {
+      createOscillator() {
+        window.__tons += 1;
+        return super.createOscillator();
+      }
+    };
+  });
+  const errosSom = [];
+  cenaSom.on('pageerror', (e) => errosSom.push(e.message));
+  await cenaSom.goto(`${BASE}/overlay/?scene=audio&canvas=hd`, { waitUntil: 'load' });
+  await cenaSom.waitForTimeout(600);
+  checar('cena de som carrega sem erro', errosSom.length === 0, errosSom.join(' | '));
+
+  await fetch(`${BASE}/api/event`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ id: 'som1', kind: 'donation', user: 'x', amount: 'R$ 5' }),
+  });
+  await cenaSom.waitForTimeout(700);
+  const tons = await cenaSom.evaluate(() => window.__tons ?? 0);
+  checar('evento toca o tom sintetizado', tons > 0, `${String(tons)} osciladores`);
+
+  await fetch(`${BASE}/api/state`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ alerts: { soundEnabled: false } }),
+  });
+  await cenaSom.waitForTimeout(400);
+  const antesDeDesligado = await cenaSom.evaluate(() => window.__tons ?? 0);
+  await fetch(`${BASE}/api/event`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ id: 'som2', kind: 'follow', user: 'y' }),
+  });
+  await cenaSom.waitForTimeout(700);
+  checar(
+    'com o som desligado nada toca',
+    (await cenaSom.evaluate(() => window.__tons ?? 0)) === antesDeDesligado,
+  );
+  await fetch(`${BASE}/api/state`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ alerts: { soundEnabled: true } }),
+  });
+
   // --- persistencia entre recarregamentos --------------------------------
   await painel.reload({ waitUntil: 'load' });
   await painel.waitForSelector('#nome-canal');

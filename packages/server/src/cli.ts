@@ -26,7 +26,10 @@ async function main(): Promise<void> {
   const caminhoEstado = resolveStatePath({ argv: process.argv, env: process.env });
 
   // A pasta de dados pode nao existir na primeira execucao.
-  await mkdir(dirname(caminhoEstado), { recursive: true });
+  const pastaDados = dirname(caminhoEstado);
+  const pastaSons = resolve(pastaDados, 'sons');
+  await mkdir(pastaDados, { recursive: true });
+  await mkdir(pastaSons, { recursive: true });
 
   const store = new StateStore({
     filePath: caminhoEstado,
@@ -46,6 +49,7 @@ async function main(): Promise<void> {
     staticRoots: {
       overlay: resolve(aqui, '..', '..', 'overlay', 'dist'),
       panel: resolve(aqui, '..', '..', 'panel', 'dist'),
+      sounds: pastaSons,
     },
   });
   const { fastify, hub } = app;
@@ -64,6 +68,7 @@ async function main(): Promise<void> {
   console.warn(`\n  Stream Kit no ar`);
   console.warn(`  Painel: ${origin}/`);
   console.warn(`  Estado: ${caminhoEstado}`);
+  console.warn(`  Sons:   ${pastaSons}`);
   console.warn(`\n  Fontes de navegador no OBS (${spec.label}):`);
   for (const item of listOverlayUrls(origin, canvas)) {
     console.warn(`    ${item.label.padEnd(12)} ${item.url}`);

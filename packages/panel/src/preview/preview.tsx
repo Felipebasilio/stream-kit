@@ -8,6 +8,7 @@ const CENAS = [
   { id: 'ingame', rotulo: 'Jogando' },
   { id: 'talking', rotulo: 'Papo' },
   { id: 'alerts', rotulo: 'Alertas' },
+  { id: 'audio', rotulo: 'Som' },
 ] as const;
 
 export function Previa({

@@ -25,12 +25,14 @@ class SocketFalso implements SocketLike {
 let hub: Hub;
 let store: StateStore;
 let eventos: StreamEvent[];
+let transicoes: number;
 
 beforeEach(async () => {
   hub = new Hub();
   store = new StateStore({ filePath: '/x/state.json', fs: fsVazio, writeDelayMs: 1 });
   await store.load();
   eventos = [];
+  transicoes = 0;
 });
 
 function conectar(role: 'overlay' | 'panel'): {
@@ -42,6 +44,9 @@ function conectar(role: 'overlay' | 'panel'): {
     hub,
     store,
     onEvent: (e) => eventos.push(e),
+    onTransition: () => {
+      transicoes += 1;
+    },
   });
   return { socket, cliente };
 }
@@ -111,6 +116,21 @@ describe('evento', () => {
       JSON.stringify({ type: 'event', event: { kind: 'follow', user: 'a' } }),
     );
     expect(eventos).toHaveLength(1);
+  });
+});
+
+describe('transicao', () => {
+  it('o painel pode pedir', () => {
+    const { cliente } = conectar('panel');
+    cliente.onMessage(JSON.stringify({ type: 'transition' }));
+    expect(transicoes).toBe(1);
+  });
+
+  it('a cena nao pode pedir', () => {
+    const { socket, cliente } = conectar('overlay');
+    cliente.onMessage(JSON.stringify({ type: 'transition' }));
+    expect(transicoes).toBe(0);
+    expect(socket.ultima()['type']).toBe('error');
   });
 });
 

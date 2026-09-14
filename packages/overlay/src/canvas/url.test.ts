@@ -5,6 +5,7 @@ import {
   applyCanvas,
   readCanvasFromUrl,
   readEditModeFromUrl,
+  readHoldFromUrl,
   readSceneFromUrl,
 } from './url.js';
 
@@ -28,6 +29,12 @@ describe('leitura da URL', () => {
     expect(readEditModeFromUrl('?edit=1')).toBe(true);
     expect(readEditModeFromUrl('?edit=true')).toBe(false);
     expect(readEditModeFromUrl('')).toBe(false);
+  });
+
+  it('o modo segurar so liga com hold=1', () => {
+    expect(readHoldFromUrl('?hold=1')).toBe(true);
+    expect(readHoldFromUrl('?hold=sim')).toBe(false);
+    expect(readHoldFromUrl('')).toBe(false);
   });
 
   it('a ordem dos parametros nao importa', () => {

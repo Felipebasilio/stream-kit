@@ -49,11 +49,46 @@ http://localhost:7373/overlay/?scene=ending&canvas=qhd
 http://localhost:7373/overlay/?scene=ingame&canvas=qhd
 http://localhost:7373/overlay/?scene=talking&canvas=qhd
 http://localhost:7373/overlay/?scene=alerts&canvas=qhd
+http://localhost:7373/overlay/?scene=audio&canvas=qhd
 ```
 
 `canvas` aceita `hd` (1920x1080), `qhd` (2560x1440) e `vertical` (1080x1920).
 Acrescente `&edit=1` para ver as guias das áreas que o player cobre — nunca
 deixe isso ligado na transmissão.
+
+### Som
+
+A cena `audio` não mostra nada — ela só toca. Adicione como fonte de navegador
+e deixe numa trilha de áudio própria no OBS.
+
+Sem arquivo escolhido, o app toca um **tom sintetizado**: nada de áudio é
+embarcado, para não criar problema de direito autoral, e mesmo assim o alerta
+não nasce mudo. Para usar sons seus, coloque os arquivos em:
+
+```
+~/Library/Application Support/StreamKit/sons/
+```
+
+e recarregue o painel — eles aparecem na lista de cada tipo de evento.
+
+**Abaixar a música quando o alerta toca** (ducking) é filtro do OBS, não nosso:
+
+1. No mixer, clique no engrenagem da fonte de música → _Filtros_
+2. Adicione **Compressor**
+3. Em _Fonte de cadeia lateral/Ducking_, escolha a fonte de áudio do Stream Kit
+4. Proporção 10:1, limiar em torno de −30 dB
+
+### Transição
+
+Dois caminhos, e os dois funcionam:
+
+- **Cena de navegador** (`&hold=0`, o padrão): o painel dispara pelo botão
+  _Tocar agora_ e a cortina passa por cima de qualquer cena aberta. Segue as
+  cores da identidade ao vivo — coisa que um arquivo de vídeo pronto não faz.
+- **Stinger de vídeo**: `pnpm stinger` gera um `.webm` com canal alfa a partir
+  da mesma animação. No OBS: _Transições → + → Stinger_. É o caminho nativo
+  para a troca de cena, e custa zero CPU durante a live. Precisa de `ffmpeg`
+  (`brew install ffmpeg`); regenere depois de mudar as cores.
 
 **Onde posicionar a webcam** (em unidades do canvas, multiplique pela altura/1000):
 
@@ -74,7 +109,6 @@ packages/
   core/     lógica pura: merge, migração, fila de eventos, contagem
   server/   processo Node: estado, WebSocket, API
   overlay/  cenas em React, independentes de resolução
-  panel/    painel de controle ao vivo
 scripts/
   verificações de paridade e resistência
 legacy-python/
@@ -113,8 +147,6 @@ pnpm check          # tipos + lint + testes com cobertura
 pnpm paridade       # compara o servidor Node com o Python, campo a campo
 pnpm resistencia    # Ctrl+C não perde edição, SIGKILL não corrompe o arquivo
 pnpm cenas          # captura as 18 imagens e verifica legibilidade e áreas seguras
-pnpm painel         # ponta a ponta: painel → servidor → cena
-pnpm verificar      # tudo acima, em sequência
 ```
 
 O `pnpm cenas` precisa do Chromium do Playwright uma vez:

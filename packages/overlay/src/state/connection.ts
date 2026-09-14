@@ -25,6 +25,7 @@ export type SocketFactory = (url: string) => SocketLike;
 export interface ConnectionHandlers {
   readonly onState: (state: StreamKitState) => void;
   readonly onEvent: (event: StreamEvent) => void;
+  readonly onTransition?: () => void;
   readonly onStatus?: (conectado: boolean) => void;
 }
 
@@ -79,6 +80,7 @@ export function connect(
       }
       if (msg.type === 'state') handlers.onState(msg.state);
       else if (msg.type === 'event') handlers.onEvent(msg.event);
+      else if (msg.type === 'transition') handlers.onTransition?.();
     });
 
     const cair = (): void => {

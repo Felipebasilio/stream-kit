@@ -13,6 +13,8 @@ export interface StreamStateResult {
   readonly state: StreamKitState;
   readonly conectado: boolean;
   readonly evento: StreamEvent | undefined;
+  /** Cresce a cada pedido de transicao. Zero significa "nenhum ainda". */
+  readonly gatilhoTransicao: number;
 }
 
 function armazenamentoLocal(): Storage | undefined {
@@ -32,6 +34,7 @@ export function useStreamState(): StreamStateResult {
   );
   const [conectado, setConectado] = useState(false);
   const [evento, setEvento] = useState<StreamEvent | undefined>(undefined);
+  const [gatilhoTransicao, setGatilho] = useState(0);
 
   useEffect(() => {
     return connect(
@@ -42,10 +45,13 @@ export function useStreamState(): StreamStateResult {
           writeCache(armazenamento.current, novo);
         },
         onEvent: setEvento,
+        onTransition: () => {
+          setGatilho((g) => g + 1);
+        },
         onStatus: setConectado,
       },
     );
   }, []);
 
-  return { state, conectado, evento };
+  return { state, conectado, evento, gatilhoTransicao };
 }

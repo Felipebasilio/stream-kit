@@ -66,8 +66,17 @@ export function createDefaultState(): StreamKitState {
         raid: '{user} chegou com {amount} pessoas!',
         chat: '{user}: {message}',
       },
+      soundEnabled: true,
+      sounds: {
+        follow: { file: '', volume: 0.6 },
+        sub: { file: '', volume: 0.8 },
+        donation: { file: '', volume: 0.9 },
+        raid: { file: '', volume: 0.9 },
+        chat: { file: '', volume: 0.3 },
+      },
     },
     previewCanvas: DEFAULT_CANVAS_ID,
     presets: [],
+    transition: { enabled: true, style: 'wipe', durationMs: 550 },
   };
 }

@@ -3,6 +3,7 @@
  */
 
 import { existsSync } from 'node:fs';
+import { readdir } from 'node:fs/promises';
 
 import { EventQueue, startCountdown, stopCountdown } from '@stream-kit/core';
 import { isClientRole, type CanvasId, type StreamEvent } from '@stream-kit/types';
@@ -14,6 +15,7 @@ import { Hub, type SocketLike } from './hub.js';
 import type { StateStore } from './state-store.js';
 import { attachClient } from './ws-handler.js';
 import { listOverlayUrls } from './urls.js';
+import { listarSons } from './sounds.js';
 import { validateEvent, validateMinutes, validatePatch } from './validate.js';
 
 export interface StaticRoots {
@@ -21,6 +23,8 @@ export interface StaticRoots {
   readonly overlay?: string;
   /** Pasta do build do painel, servida na raiz. */
   readonly panel?: string;
+  /** Pasta de sons do usuario, servida em /sons. */
+  readonly sounds?: string;
 }
 
 export interface AppOptions {
@@ -79,6 +83,15 @@ export async function createApp(options: AppOptions): Promise<App> {
       decorateReply: false,
     });
   }
+  const soundsRoot = options.staticRoots?.sounds;
+  if (soundsRoot !== undefined && existsSync(soundsRoot)) {
+    await fastify.register(fastifyStatic, {
+      root: soundsRoot,
+      prefix: '/sons/',
+      decorateReply: false,
+    });
+  }
+
   const panelRoot = options.staticRoots?.panel;
   if (panelRoot !== undefined && existsSync(panelRoot)) {
     await fastify.register(fastifyStatic, {
@@ -88,9 +101,29 @@ export async function createApp(options: AppOptions): Promise<App> {
     });
   }
 
+  const dispararTransicao = (): void => {
+    if (!store.get().transition.enabled) return;
+    // So as cenas precisam saber: o painel ja sabe que pediu.
+    hub.broadcast({ type: 'transition' }, 'overlay');
+  };
+
   fastify.get('/health', () => ({ ok: true, clients: hub.size }));
 
+  fastify.post('/api/transition', (_request, reply) => {
+    dispararTransicao();
+    return reply.send({ ok: true, enabled: store.get().transition.enabled });
+  });
+
   fastify.get('/api/state', () => store.get());
+
+  fastify.get('/api/sounds', async () => {
+    if (soundsRoot === undefined || !existsSync(soundsRoot)) return { sounds: [] };
+    try {
+      return { sounds: listarSons(await readdir(soundsRoot)) };
+    } catch {
+      return { sounds: [] };
+    }
+  });
 
   fastify.get('/api/urls', (request) => {
     const canvas = store.get().previewCanvas;
@@ -130,7 +163,12 @@ export async function createApp(options: AppOptions): Promise<App> {
     const role = isClientRole(papel) ? papel : 'overlay';
     const socket = connection as unknown as SocketLike;
 
-    const cliente = attachClient(socket, role, { hub, store, onEvent: publicarEvento });
+    const cliente = attachClient(socket, role, {
+      hub,
+      store,
+      onEvent: publicarEvento,
+      onTransition: dispararTransicao,
+    });
     sockets.set(cliente.id, connection as unknown as { ping(): void });
 
     const encerrar = (): void => {

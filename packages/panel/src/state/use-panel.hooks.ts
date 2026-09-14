@@ -28,6 +28,7 @@ export interface PainelApi {
   refazer(): void;
   disparar(evento: Omit<StreamEvent, 'id' | 'at' | 'platform'>): void;
   contagem(minutos: number): void;
+  transicao(): void;
 }
 
 function url(caminho: string): string {
@@ -171,6 +172,10 @@ export function usePainel(): PainelApi {
     });
   }, []);
 
+  const transicao = useCallback(() => {
+    void fetch('/api/transition', { method: 'POST' });
+  }, []);
+
   return {
     state,
     conectado,
@@ -182,5 +187,6 @@ export function usePainel(): PainelApi {
     refazer,
     disparar,
     contagem,
+    transicao,
   };
 }

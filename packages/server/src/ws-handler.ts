@@ -20,6 +20,7 @@ export interface WsDeps {
   readonly hub: Hub;
   readonly store: StateStore;
   readonly onEvent: (event: StreamEvent) => void;
+  readonly onTransition: () => void;
 }
 
 function parse(raw: string): ClientMessage | undefined {
@@ -27,7 +28,14 @@ function parse(raw: string): ClientMessage | undefined {
     const parsed: unknown = JSON.parse(raw);
     if (typeof parsed !== 'object' || parsed === null) return undefined;
     const type = (parsed as Record<string, unknown>)['type'];
-    if (type !== 'patch' && type !== 'event' && type !== 'ping') return undefined;
+    if (
+      type !== 'patch' &&
+      type !== 'event' &&
+      type !== 'ping' &&
+      type !== 'transition'
+    ) {
+      return undefined;
+    }
     return parsed as ClientMessage;
   } catch {
     return undefined;
@@ -80,6 +88,15 @@ export function attachClient(
         }
         deps.store.apply(validado.value);
         responder({ type: 'ack', id: message.id });
+        return;
+      }
+
+      if (message.type === 'transition') {
+        if (role !== 'panel') {
+          responder({ type: 'error', message: 'somente o painel dispara transicao' });
+          return;
+        }
+        deps.onTransition();
         return;
       }
 

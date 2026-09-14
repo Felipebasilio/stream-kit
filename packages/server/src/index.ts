@@ -5,5 +5,6 @@ export * from './validate.js';
 export * from './ws-handler.js';
 export * from './paths.js';
 export * from './port.js';
+export * from './sounds.js';
 export * from './urls.js';
 export * from './node-fs.js';

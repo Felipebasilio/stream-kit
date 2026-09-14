@@ -23,7 +23,8 @@
     "cenas": "pnpm build && node scripts/cenas.mjs",
     "clean": "find . -name '*.tsbuildinfo' -not -path '*/node_modules/*' -delete && rm -rf packages/*/dist packages/*/dist-types coverage capturas",
     "painel": "pnpm build && node scripts/painel.mjs",
-    "verificar": "pnpm check && pnpm cenas && pnpm painel && pnpm resistencia && pnpm paridade"
+    "verificar": "pnpm check && pnpm cenas && pnpm painel && pnpm resistencia && pnpm paridade",
+    "stinger": "pnpm build && node scripts/stinger.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

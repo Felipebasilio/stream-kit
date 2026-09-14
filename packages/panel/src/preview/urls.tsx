@@ -8,6 +8,7 @@ const CENAS: readonly { id: string; rotulo: string }[] = [
   { id: 'ingame', rotulo: 'Jogando' },
   { id: 'talking', rotulo: 'Papo' },
   { id: 'alerts', rotulo: 'Alertas' },
+  { id: 'audio', rotulo: 'Som' },
 ];
 
 export function UrlsDoObs({ canvas }: { canvas: CanvasId }): JSX.Element {

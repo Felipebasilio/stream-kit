@@ -74,6 +74,29 @@ export interface TalkingConfig {
 
 export type AlertPosition = 'top' | 'center' | 'bottom';
 
+/**
+ * Som de um tipo de evento.
+ *
+ * `file` vazio usa o tom sintetizado que acompanha o app. Isso e de proposito:
+ * embarcar audio pronto criaria um problema de direitos autorais que nao
+ * precisamos ter, e um alerta mudo nao existe para quem esta olhando o jogo.
+ */
+export interface AlertSound {
+  /** Nome do arquivo dentro da pasta de sons do usuario. Vazio = tom sintetizado. */
+  file: string;
+  /** 0 a 1. */
+  volume: number;
+}
+
+export type TransitionStyle = 'wipe' | 'shutter' | 'flash';
+
+export interface TransitionConfig {
+  enabled: boolean;
+  style: TransitionStyle;
+  /** Duracao total, em milissegundos. Acima de 700ms comeca a irritar. */
+  durationMs: number;
+}
+
 export interface AlertConfig {
   /** Duracao na tela, em milissegundos. */
   duration: number;
@@ -85,6 +108,15 @@ export interface AlertConfig {
     donation: string;
     raid: string;
     chat: string;
+  };
+  /** Liga ou desliga todo o audio de uma vez. */
+  soundEnabled: boolean;
+  sounds: {
+    follow: AlertSound;
+    sub: AlertSound;
+    donation: AlertSound;
+    raid: AlertSound;
+    chat: AlertSound;
   };
 }
 
@@ -114,6 +146,7 @@ export interface StreamKitState {
   previewCanvas: CanvasId;
   /** Identidades salvas. Vazio ate o usuario salvar a primeira. */
   presets: Preset[];
+  transition: TransitionConfig;
 }
 
 /**

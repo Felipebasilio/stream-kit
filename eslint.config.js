@@ -30,6 +30,8 @@ export default tseslint.config(
         document: 'readonly',
         window: 'readonly',
         getComputedStyle: 'readonly',
+        Audio: 'readonly',
+        AudioContext: 'readonly',
       },
     },
     rules: { 'no-console': 'off' },

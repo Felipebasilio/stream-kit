@@ -10,6 +10,8 @@ import { Identidade } from './sections/identidade.js';
 import { Jogo } from './sections/jogo.js';
 import { Papo } from './sections/papo.js';
 import { Redes } from './sections/redes.js';
+import { Som } from './sections/som.js';
+import { Transicao } from './sections/transicao.js';
 import { usePainel } from './state/use-panel.hooks.js';
 
 export function App(): JSX.Element {
@@ -41,6 +43,8 @@ export function App(): JSX.Element {
           <Jogo api={api} />
           <Papo api={api} />
           <Alertas api={api} />
+          <Som api={api} />
+          <Transicao api={api} />
         </div>
         <div>
           <Previa

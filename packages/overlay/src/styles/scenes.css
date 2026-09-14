@@ -566,3 +566,120 @@
 :root[data-orientation='vertical'] .redes-bloco {
   right: 15%;
 }
+
+/* ====================== transicao ====================== */
+
+/*
+ * Cortina que cobre a tela por meio segundo na troca de cena.
+ * So `transform` e animado: o objetivo e nao perder um unico quadro
+ * justamente no momento em que o espectador esta olhando.
+ */
+.transicao {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.transicao__faixa {
+  position: absolute;
+  inset: -20% -30%;
+  transform: translateX(-130%) rotate(var(--angle));
+  will-change: transform;
+  animation-timing-function: cubic-bezier(0.7, 0, 0.3, 1);
+  animation-fill-mode: both;
+}
+
+.transicao--wipe .transicao__faixa {
+  animation-name: cortina;
+}
+.transicao--wipe .transicao__faixa:nth-child(1) {
+  background: var(--accent);
+}
+.transicao--wipe .transicao__faixa:nth-child(2) {
+  background: var(--bg-1);
+  animation-delay: 60ms;
+}
+.transicao--wipe .transicao__faixa:nth-child(3) {
+  background: var(--accent-2);
+  animation-delay: 120ms;
+  opacity: 0.35;
+}
+
+@keyframes cortina {
+  0% {
+    transform: translateX(-130%) rotate(var(--angle));
+  }
+  45% {
+    transform: translateX(0) rotate(var(--angle));
+  }
+  55% {
+    transform: translateX(0) rotate(var(--angle));
+  }
+  100% {
+    transform: translateX(130%) rotate(var(--angle));
+  }
+}
+
+/* Persiana: varias lâminas atravessam juntas. */
+.transicao--shutter .transicao__faixa {
+  inset: auto -30%;
+  height: 34%;
+  animation-name: cortina;
+  background: var(--accent);
+}
+.transicao--shutter .transicao__faixa:nth-child(1) {
+  top: 0;
+}
+.transicao--shutter .transicao__faixa:nth-child(2) {
+  top: 33%;
+  animation-delay: 50ms;
+  background: var(--bg-1);
+}
+.transicao--shutter .transicao__faixa:nth-child(3) {
+  top: 66%;
+  animation-delay: 100ms;
+}
+
+/* Estouro de luz: a mais curta e a menos intrusiva. */
+.transicao--flash .transicao__faixa {
+  inset: 0;
+  transform: none;
+  animation-name: estouro;
+  background: #fff;
+}
+.transicao--flash .transicao__faixa:nth-child(2),
+.transicao--flash .transicao__faixa:nth-child(3) {
+  display: none;
+}
+
+@keyframes estouro {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* A cena de som nao mostra nada na transmissao. */
+.cena--som {
+  display: grid;
+  place-items: center;
+  background: #0a0f1c;
+}
+.cena--som__aviso {
+  font-size: calc(26 * var(--u));
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  padding: calc(40 * var(--u));
+}
+
+/* Congelamento para a captura quadro a quadro do gerador de stinger. */
+:root[data-congelado='1'] * {
+  animation-play-state: paused !important;
+}

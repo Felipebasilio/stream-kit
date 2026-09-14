@@ -29,3 +29,11 @@ export function applyCanvas(root: HTMLElement, canvas: CanvasSpec): void {
   root.dataset['orientation'] = canvas.orientation;
   root.dataset['canvas'] = canvas.id;
 }
+
+/**
+ * Mantem a transicao montada indefinidamente. Usado pelo gerador de stinger.
+ * Nunca deve ser ligado numa cena que vai ao ar.
+ */
+export function readHoldFromUrl(search: string): boolean {
+  return new URLSearchParams(search).get('hold') === '1';
+}
