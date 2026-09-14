@@ -43,7 +43,7 @@ export function Papo({
         </aside>
       )}
 
-      <BarraInferior state={state} />
+      <BarraInferior state={state} canvas={canvas} />
     </div>
   );
 }

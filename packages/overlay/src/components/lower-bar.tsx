@@ -1,7 +1,8 @@
-import type { StreamKitState } from '@stream-kit/types';
+import type { CanvasSpec, StreamKitState } from '@stream-kit/types';
 import { useEffect, useState, type JSX } from 'react';
 
-import { RodizioRedes } from './socials.js';
+import { mostrarRelogio } from './bar-fit.js';
+import { RodizioRedes, visiveis } from './socials.js';
 
 function agora(): string {
   return new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -20,9 +21,20 @@ function useRelogio(): string {
   return hora;
 }
 
-export function BarraInferior({ state }: { state: StreamKitState }): JSX.Element {
+export function BarraInferior({
+  state,
+  canvas,
+}: {
+  state: StreamKitState;
+  canvas: CanvasSpec;
+}): JSX.Element {
   const hora = useRelogio();
   const { ingame } = state;
+  const relogio = mostrarRelogio({
+    showClock: ingame.showClock,
+    orientation: canvas.orientation,
+    handles: visiveis(state).map((r) => r.handle),
+  });
 
   return (
     <div className="barra">
@@ -57,7 +69,7 @@ export function BarraInferior({ state }: { state: StreamKitState }): JSX.Element
 
       <div className="barra__direita">
         <RodizioRedes state={state} />
-        {ingame.showClock && <div className="relogio">{hora}</div>}
+        {relogio && <div className="relogio">{hora}</div>}
       </div>
     </div>
   );

@@ -124,9 +124,20 @@
   overflow: hidden;
 }
 
+/*
+ * O quadrado do icone.
+ *
+ * O tamanho do glifo era fixo em 26u dentro de uma caixa de 52u, o que dava
+ * respiro por conta e nao por decisao: um arquivo mais "cheio" que os glifos
+ * embutidos — o do Discord, por exemplo — encostava nas bordas. Agora o
+ * respiro e padding de verdade e vale para qualquer arquivo.
+ */
 .rede__icone {
+  flex: 0 0 auto;
+  box-sizing: border-box;
   width: calc(52 * var(--u));
   height: 100%;
+  padding: calc(14 * var(--u));
   display: grid;
   place-items: center;
   background: rgba(255, 255, 255, 0.07);
@@ -134,8 +145,8 @@
 }
 .rede__icone svg,
 .rede__icone img {
-  width: calc(26 * var(--u));
-  height: calc(26 * var(--u));
+  width: 100%;
+  height: 100%;
 }
 .rede__icone svg {
   fill: #fff;
@@ -148,12 +159,16 @@
 }
 
 .rede__arroba {
-  padding: 0 calc(18 * var(--u));
+  min-width: 0;
+  padding: 0 calc(20 * var(--u));
   font-size: var(--fs-handle);
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   white-space: nowrap;
+  /* So entra em acao depois do teto do rodizio: ate la o @ aparece inteiro. */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .marca-dagua {
@@ -169,8 +184,24 @@
 
 /* ====================== camera ====================== */
 
+/*
+ * A moldura da camera.
+ *
+ * Proporcao 280x260, nao 16:9. O recorte que o Felipe faz na webcam para se
+ * centralizar sai quase quadrado; uma moldura 16:9 em volta disso obrigaria a
+ * esticar a imagem ou a deixar faixa preta dos dois lados.
+ *
+ * Posicao sempre por `left`/`top`, nunca por `right`/`bottom`, mesmo nos
+ * cantos da direita. Parece rodeio e nao e: trocar de `left: X` para
+ * `right: Y` significa trocar de propriedade, e o valor antigo vira `auto` —
+ * `auto` nao anima. Com as duas ancoras sempre nas mesmas propriedades, o
+ * deslocamento entre um canto e outro e uma transicao de verdade.
+ */
 .camera {
   position: absolute;
+  transition:
+    left 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+    top 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
   border-radius: var(--radius);
   border: calc(2 * var(--u)) solid color-mix(in srgb, var(--accent) 75%, #fff 10%);
   box-shadow:
@@ -255,15 +286,26 @@
   z-index: 3;
   display: flex;
   align-items: stretch;
-  background: linear-gradient(
-    90deg,
-    rgba(5, 10, 22, 0.94) 0%,
-    rgba(5, 10, 22, 0.86) 62%,
-    color-mix(in srgb, var(--bg-2) 80%, transparent) 100%
-  );
-  border-top: calc(2 * var(--u)) solid color-mix(in srgb, var(--accent) 70%, transparent);
-  border-bottom: calc(2 * var(--u)) solid
-    color-mix(in srgb, var(--accent) 25%, transparent);
+  /*
+   * Sem faixa de fundo, por decisao do Felipe.
+   *
+   * A barra era um degrade da largura inteira e comia um pedaco do jogo o
+   * tempo todo, inclusive quando nao havia nada escrito nela. Agora cada peca
+   * carrega o proprio fundo: a marca tem o chip colorido, os @s tem a pilula,
+   * e o que e so texto ganha sombra para continuar legivel por cima de
+   * qualquer cena — que era a unica coisa que a faixa realmente fazia.
+   */
+  background: none;
+  border: 0;
+}
+
+/* A sombra e o que substitui a faixa: dois contornos curtos e escuros seguram
+   o texto branco tanto num jogo claro quanto num escuro. */
+.barra__meio,
+.relogio {
+  text-shadow:
+    0 calc(1 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, 0.9),
+    0 0 calc(12 * var(--u)) rgba(0, 0, 0, 0.7);
 }
 
 .barra__marca {
@@ -365,14 +407,22 @@
   font-variant-numeric: tabular-nums;
 }
 
+/*
+ * O rodizio de @s.
+ *
+ * Era `position: absolute` numa caixa de largura fixa, e por isso um @ longo
+ * — "https://discord.gg/..." — era cortado no meio. Agora as pilulas se
+ * empilham na MESMA celula de grid: elas continuam uma por cima da outra,
+ * mas a celula passa a ter a largura da maior, entao ninguem e cortado.
+ * O maximo existe so para um @ absurdo nao empurrar o relogio para fora.
+ */
 .rodizio {
-  position: relative;
-  min-width: calc(240 * var(--u));
+  display: grid;
   height: calc(52 * var(--u));
+  max-width: calc(560 * var(--u));
 }
 .rodizio .rede {
-  position: absolute;
-  inset: 0;
+  grid-area: 1 / 1;
   opacity: 0;
   transform: translateY(calc(8 * var(--u)));
   transition:
@@ -517,16 +567,38 @@
 
 /* ====================== posicoes por orientacao ====================== */
 
+/*
+ * Horizontal: moldura de 280x260u, 44u das laterais.
+ *
+ * Em cima ela para em 90u, abaixo dos 6% que o titulo do player cobre. Embaixo
+ * ela para a 120u do rodape, acima dos 8% dos controles E da barra inferior,
+ * que tem 84u. Esses numeros estao verificados em `scripts/camera.mjs`.
+ */
 :root[data-orientation='horizontal'] .camera {
-  left: calc(44 * var(--u));
-  bottom: calc(120 * var(--u));
-  width: calc(460 * var(--u));
-  height: calc(259 * var(--u));
+  width: calc(280 * var(--u));
+  height: calc(260 * var(--u));
 }
+:root[data-orientation='horizontal'] .camera--left-top,
+:root[data-orientation='horizontal'] .camera--left-bottom {
+  left: calc(44 * var(--u));
+}
+:root[data-orientation='horizontal'] .camera--right-top,
+:root[data-orientation='horizontal'] .camera--right-bottom {
+  left: calc(var(--canvas-w) - 324 * var(--u));
+}
+:root[data-orientation='horizontal'] .camera--left-top,
+:root[data-orientation='horizontal'] .camera--right-top {
+  top: calc(90 * var(--u));
+}
+:root[data-orientation='horizontal'] .camera--left-bottom,
+:root[data-orientation='horizontal'] .camera--right-bottom {
+  top: calc(var(--canvas-h) - 380 * var(--u));
+}
+/* A cena de papo mostra a camera grande, mas na mesma proporcao do recorte. */
 :root[data-orientation='horizontal'] .papo-camera {
   left: calc(84 * var(--u));
   top: calc(130 * var(--u));
-  width: calc(1092 * var(--u));
+  width: calc(661 * var(--u));
   height: calc(614 * var(--u));
 }
 :root[data-orientation='horizontal'] .papo-painel {
@@ -537,19 +609,38 @@
 
 /* No vertical o layout muda de verdade: a camera ocupa o topo inteiro e o
    painel desce para baixo dela. Nao e a versao horizontal encolhida. */
+/*
+ * Vertical: a mesma proporcao, maior, porque sobra altura.
+ *
+ * Os cantos da direita param antes dos 15% onde o celular desenha os botoes
+ * de interacao — se a moldura entrasse ali, metade do rosto sumiria embaixo
+ * do botao de curtir justamente para quem assiste no telefone.
+ */
 :root[data-orientation='vertical'] .camera {
+  width: calc(280 * var(--u));
+  height: calc(260 * var(--u));
+}
+:root[data-orientation='vertical'] .camera--left-top,
+:root[data-orientation='vertical'] .camera--left-bottom {
   left: calc(30 * var(--u));
-  right: calc(30 * var(--u));
-  top: calc(90 * var(--u));
-  width: auto;
-  height: calc(340 * var(--u));
+}
+:root[data-orientation='vertical'] .camera--right-top,
+:root[data-orientation='vertical'] .camera--right-bottom {
+  left: calc(var(--canvas-w) * 0.85 - 300 * var(--u));
+}
+:root[data-orientation='vertical'] .camera--left-top,
+:root[data-orientation='vertical'] .camera--right-top {
+  top: calc(100 * var(--u));
+}
+:root[data-orientation='vertical'] .camera--left-bottom,
+:root[data-orientation='vertical'] .camera--right-bottom {
+  top: calc(var(--canvas-h) - 410 * var(--u));
 }
 :root[data-orientation='vertical'] .papo-camera {
   left: calc(30 * var(--u));
-  right: calc(30 * var(--u));
   top: calc(90 * var(--u));
-  width: auto;
-  height: calc(380 * var(--u));
+  width: calc(420 * var(--u));
+  height: calc(390 * var(--u));
 }
 /* O painel desce para baixo da camera e para antes da barra, que por sua vez
    para antes dos controles do player. Nada de conteudo nos 15% da direita,
@@ -595,7 +686,7 @@
   gap: calc(14 * var(--u));
 }
 :root[data-orientation='vertical'] .rodizio {
-  min-width: calc(120 * var(--u));
+  max-width: calc(var(--canvas-w) - 60 * var(--u));
 }
 :root[data-orientation='vertical'] .relogio {
   font-size: calc(32 * var(--u));
@@ -619,7 +710,7 @@
   right: 16%;
 }
 :root[data-orientation='vertical'] .rodizio {
-  min-width: calc(200 * var(--u));
+  max-width: calc(var(--canvas-w) - 60 * var(--u));
 }
 /* O palco inteiro se desloca para a esquerda dos botoes de interacao. O texto
    fica centralizado dentro da area visivel, nao dentro do quadro. */

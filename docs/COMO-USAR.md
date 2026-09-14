@@ -126,6 +126,12 @@ acerta o número, e as cenas nunca dessincronizam entre si.
 A caixinha liga e desliga cada rede, o `@` é o texto que aparece, e a última
 coluna escolhe o ícone.
 
+A pílula tem **largura adaptativa**: um `@` longo, como uma URL de convite do
+Discord, aparece inteiro em vez de ser cortado. No canvas vertical, quando o
+`@` é longo demais para caber junto do relógio, **o relógio sai** — quem
+assiste no celular já tem a hora na tela do telefone, e um endereço cortado no
+meio não serve para nada.
+
 Os ícones que acompanham o app são **genéricos** — o do TikTok é uma nota
 musical, não o logo. Isso é decisão de projeto: os logos oficiais são marca
 registrada, cada plataforma tem sua regra de uso, e um app que distribui isso
@@ -146,7 +152,20 @@ a versão "monocromática branca" do kit de imprensa costuma ser exatamente essa
 
 ### Overlay in-game
 
-Etiqueta da câmera, letreiro e "jogando agora".
+Etiqueta da câmera, letreiro, "jogando agora" e a **posição da câmera**.
+
+Os quatro cantos aparecem em cruz, como aparecem na tela: clicar desliza a
+moldura até lá, ao vivo e com animação. Cada jogo põe informação importante num
+canto diferente — minimapa, vida, inventário — então poder fugir do canto
+errado é a diferença entre usar a câmera e desligar ela.
+
+> **O painel move a moldura, não a webcam.** A webcam é uma fonte do OBS e só o
+> OBS mexe nela. Para trocar as duas juntas com um botão só do Stream Deck,
+> monte uma cena por layout — o passo a passo está em
+> [OBS.md](OBS.md), seção 3.
+
+A moldura tem a proporção do **seu recorte** (280x260), não 16:9: a imagem
+recortada preenche o quadro sem esticar e sem faixa preta dos lados.
 
 > No canvas **vertical** o nome do canal sai da barra inferior. Em 1080px de
 > largura não cabem marca, jogando, @ e relógio sem truncar tudo — e o @ já

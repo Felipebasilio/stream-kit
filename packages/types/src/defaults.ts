@@ -45,6 +45,7 @@ export function createDefaultState(): StreamKitState {
     countdown: { enabled: false, endsAt: 0, label: 'COMEÇA EM' },
     ingame: {
       showCam: true,
+      camPosition: 'left-bottom',
       camLabel: 'AO VIVO',
       nowPlaying: '',
       ticker: 'Bem-vindo à live! Use !comandos no chat',

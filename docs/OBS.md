@@ -63,6 +63,8 @@ http://localhost:7373/overlay/?scene=audio&canvas=qhd
 ```
 
 `canvas` aceita `hd` (1920x1080), `qhd` (2560x1440) e `vertical` (1080x1920).
+A cena `ingame` aceita também `&cam=` para fixar o canto da câmera — é o que
+faz a troca de layout pelo Stream Deck. Ver a seção 3.
 
 > Sempre copie do painel em vez de digitar. Se a porta 7373 estiver ocupada, o
 > servidor usa outra e as URLs mudam junto.
@@ -97,20 +99,139 @@ abaixo aparece por trás — captura de jogo, webcam, o que for.
 A moldura de câmera é um retângulo vazio: ela desenha a borda, você posiciona a
 sua webcam atrás dela.
 
-**Onde colocar a webcam.** As posições estão em unidades do canvas — multiplique
-pela altura dividida por 1000. Em 2560x1440 a unidade vale 1,44px:
+**A moldura tem a proporção do seu recorte, não 16:9.** Sua webcam entrega
+1920x1080, mas você recorta para 280x260 para se centralizar. A moldura segue
+essa proporção — assim a imagem recortada preenche o quadro sem esticar e sem
+faixa preta dos lados.
 
-| Cena    | Orientação | x   | y             | largura             | altura |
-| ------- | ---------- | --- | ------------- | ------------------- | ------ |
-| ingame  | horizontal | 44u | rodapé + 120u | 460u                | 259u   |
-| ingame  | vertical   | 30u | 90u           | largura cheia − 60u | 340u   |
-| talking | horizontal | 84u | 130u          | 1092u               | 614u   |
-| talking | vertical   | 30u | 90u           | largura cheia − 60u | 380u   |
+#### Onde colocar a webcam, em pixels
 
-Em 2560x1440, a moldura do `ingame` fica em x=63, y=1267, 662×373.
+Números da **área interna** da moldura, já descontada a borda. Ponha esses
+valores em **botão direito na webcam → Transformar → Editar transformação**,
+nos campos _Posição_ e _Tamanho da caixa delimitadora_, com o tipo
+**"Ajustar aos limites internos"** — assim o OBS respeita a proporção sozinho.
 
-Jeito mais rápido: ligue as **Guias** na prévia do painel, ou abra a cena com
-`&edit=1`, e arraste a webcam até encaixar na moldura. Depois tire o `&edit=1`.
+**1920x1080**
+
+| Layout             | Posição X | Posição Y | Tamanho |
+| ------------------ | --------- | --------- | ------- |
+| ↖ esquerda em cima | 50        | 99        | 298x277 |
+| ↗ direita em cima  | 1572      | 99        | 298x277 |
+| ↙ esquerda embaixo | 50        | 672       | 298x277 |
+| ↘ direita embaixo  | 1572      | 672       | 298x277 |
+
+**2560x1440**
+
+| Layout             | Posição X | Posição Y | Tamanho |
+| ------------------ | --------- | --------- | ------- |
+| ↖ esquerda em cima | 66        | 133       | 397x368 |
+| ↗ direita em cima  | 2096      | 133       | 397x368 |
+| ↙ esquerda embaixo | 66        | 896       | 397x368 |
+| ↘ direita embaixo  | 2096      | 896       | 397x368 |
+
+**1080x1920 (vertical)**
+
+| Layout             | Posição X | Posição Y | Tamanho |
+| ------------------ | --------- | --------- | ------- |
+| ↖ esquerda em cima | 62        | 196       | 530x491 |
+| ↗ direita em cima  | 346       | 196       | 530x491 |
+| ↙ esquerda embaixo | 62        | 1137      | 530x491 |
+| ↘ direita embaixo  | 346       | 1137      | 530x491 |
+
+> No vertical a moldura da direita **não** encosta na borda: os 15% da direita
+> são onde o celular desenha os botões de curtir e comentar. Meio rosto
+> sumiria justamente para quem assiste no telefone.
+
+Se preferir no olho: ligue as **Guias** na prévia do painel, ou abra a cena com
+`&edit=1`, e arraste a webcam até encaixar. Depois tire o `&edit=1`.
+
+Na cena de **papo** a moldura é maior e fica em x=121, y=190, 949x881 (em
+2560x1440), com a mesma proporção.
+
+### Cinco layouts, um botão no Stream Deck
+
+O problema real não é mover a moldura — é que a **webcam** também precisa se
+mover junto, e isso o overlay não consegue fazer: a webcam é uma fonte do OBS.
+
+A solução é deixar cada combinação pronta numa cena do OBS. Trocar de cena
+move a moldura e a webcam ao mesmo tempo, porque as duas já estão no lugar
+certo naquela cena.
+
+#### O parâmetro que amarra as duas
+
+Toda URL de cena aceita `&cam=`:
+
+```
+http://localhost:7373/overlay/?scene=ingame&canvas=qhd&cam=left-top
+http://localhost:7373/overlay/?scene=ingame&canvas=qhd&cam=right-top
+http://localhost:7373/overlay/?scene=ingame&canvas=qhd&cam=left-bottom
+http://localhost:7373/overlay/?scene=ingame&canvas=qhd&cam=right-bottom
+http://localhost:7373/overlay/?scene=ingame&canvas=qhd&cam=off
+```
+
+`cam=` **manda mais que o painel**. É de propósito: uma cena do OBS que pede
+`left-top` precisa desenhar em `left-top`, mesmo que o painel esteja em outro
+canto — senão a moldura brigaria com a webcam bem no meio da live. E `cam=off`
+é o layout sem câmera sem depender de achar a caixinha "mostrar câmera".
+
+#### Montando as cinco cenas
+
+Faça uma vez, use para sempre:
+
+1. Duplique sua cena de jogo cinco vezes. Sugestão de nome:
+   `Jogo ↖`, `Jogo ↗`, `Jogo ↙`, `Jogo ↘`, `Jogo sem câmera`
+2. Em cada uma, na fonte de navegador do overlay, acrescente o `&cam=` daquele
+   layout na URL
+3. Em cada uma, posicione a webcam com a tabela acima
+4. Na `Jogo sem câmera`, use `&cam=off` e **desmarque o olho** da webcam
+
+**O detalhe que economiza trabalho:** ao adicionar a webcam e a captura de jogo
+nas outras cenas, use **Fontes → + → escolha "Adicionar existente"** em vez de
+criar uma fonte nova. É a mesma fonte, uma captura só do dispositivo — mas o
+OBS guarda **a transformação separada por cena**. É exatamente o que a gente
+quer: uma webcam, cinco posições. Criar cinco capturas da mesma câmera
+funcionaria, mas gastaria CPU à toa e o macOS às vezes reclama.
+
+Marque **"Desligar a fonte quando não estiver visível"** nas cinco fontes de
+navegador. Só a cena no ar consome CPU.
+
+#### O botão do Stream Deck
+
+Agora cada layout é **uma troca de cena**, e trocar de cena é a coisa mais
+básica que qualquer Stream Deck faz. Dois caminhos:
+
+**Se o software do seu deck tem integração com OBS:** ação "Trocar de cena" →
+escolha a cena. Um botão por layout, pronto.
+
+**Se não tem (vale para qualquer deck, inclusive os que só mandam tecla):** use
+atalho do OBS.
+
+1. OBS → **Configurações → Atalhos**
+2. Procure cada cena na lista. Cada uma tem a linha **"Mudar para a cena"**
+3. Clique no campo e aperte a combinação, ex.: `Ctrl+Alt+1` até `Ctrl+Alt+5`
+4. No software do deck, use a ação de **atalho de teclado** com a mesma
+   combinação
+
+Use combinações que nenhum jogo usa. `Ctrl+Alt+número` é seguro; `F13` a `F19`
+é mais seguro ainda, porque teclado nenhum tem essas teclas e jogo nenhum
+escuta.
+
+#### A transição continua
+
+A transição entre cenas é a do OBS, e vale para os cinco botões de uma vez:
+**Transições → Fade**, 200–300ms. Se quiser a cortina do Stream Kit, gere o
+stinger com `pnpm stinger` e escolha ele — aí a troca de layout usa a mesma
+animação das outras trocas.
+
+#### E o painel?
+
+Continua funcionando, e é o jeito de **experimentar**: na seção _Overlay
+in-game_ tem os quatro cantos em cruz. Ali a moldura desliza de um canto ao
+outro, animada, ao vivo.
+
+A diferença: pelo painel só a moldura se move, não a webcam. Use o painel para
+decidir qual canto fica melhor num jogo, e as cenas do OBS para usar isso ao
+vivo com um botão.
 
 ### Cenas de tela cheia
 

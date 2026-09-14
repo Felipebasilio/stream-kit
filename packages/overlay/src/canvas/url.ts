@@ -7,7 +7,33 @@
  * 1440p, sem uma linha de CSS duplicada.
  */
 
-import { resolveCanvas, type CanvasSpec } from '@stream-kit/types';
+import {
+  isCamPosition,
+  resolveCanvas,
+  type CamPosition,
+  type CanvasSpec,
+} from '@stream-kit/types';
+
+/**
+ * `&cam=` fixa a camera numa posicao, ignorando o painel.
+ *
+ * Existe para o jeito de trocar de layout no OBS com um botao so: cada cena
+ * do OBS tem a sua fonte de navegador com o `cam` dela e a webcam ja
+ * posicionada no lugar certo. Trocar de cena move a moldura e a webcam
+ * juntas, sem precisar acertar as duas na mao.
+ *
+ * `off` esconde a camera — e o layout sem camera, que pelo painel exigiria
+ * achar a caixinha "mostrar camera" no meio de uma live.
+ */
+export type CamOverride = CamPosition | 'off';
+
+export function readCamFromUrl(search: string): CamOverride | null {
+  const valor = new URLSearchParams(search).get('cam');
+  if (valor === null) return null;
+  const limpo = valor.trim().toLowerCase();
+  if (limpo === 'off' || limpo === 'none' || limpo === '0') return 'off';
+  return isCamPosition(limpo) ? limpo : null;
+}
 
 export function readCanvasFromUrl(search: string): CanvasSpec {
   return resolveCanvas(new URLSearchParams(search).get('canvas'));

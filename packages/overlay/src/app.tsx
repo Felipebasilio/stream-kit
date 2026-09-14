@@ -2,7 +2,12 @@ import { SCENE_IDS, type SceneId } from '@stream-kit/types';
 import { useEffect, type JSX } from 'react';
 
 import { AreasSeguras } from './components/background.js';
-import { readEditModeFromUrl, readHoldFromUrl, readSceneFromUrl } from './canvas/url.js';
+import {
+  readCamFromUrl,
+  readEditModeFromUrl,
+  readHoldFromUrl,
+  readSceneFromUrl,
+} from './canvas/url.js';
 import { useBrand } from './canvas/use-brand.hooks.js';
 import { useCanvas } from './canvas/use-canvas.hooks.js';
 import { Transicao } from './components/transition.js';
@@ -22,6 +27,7 @@ export function App({ search }: { search: string }): JSX.Element {
   const cena = readSceneFromUrl(search);
   const edicao = readEditModeFromUrl(search);
   const segurar = readHoldFromUrl(search);
+  const cam = readCamFromUrl(search);
   const { state, evento, gatilhoTransicao } = useStreamState();
   useBrand(state.brand);
 
@@ -35,7 +41,7 @@ export function App({ search }: { search: string }): JSX.Element {
   const conteudo = ehCenaDeTexto(cena) ? (
     <TelaCheia scene={cena} state={state} canvas={canvas} />
   ) : cena === 'ingame' ? (
-    <Jogando state={state} />
+    <Jogando state={state} canvas={canvas} cam={cam} />
   ) : cena === 'talking' ? (
     <Papo state={state} canvas={canvas} />
   ) : cena === 'alerts' ? (

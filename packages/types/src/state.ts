@@ -59,8 +59,40 @@ export interface Countdown {
   label: string;
 }
 
+/**
+ * Onde a moldura da camera fica na cena.
+ *
+ * Nao e enfeite: cada jogo poe informacao importante num canto diferente
+ * (minimapa, vida, inventario). Poder mudar de canto sem refazer o overlay e
+ * a diferenca entre usar a camera e desligar ela.
+ */
+export type CamPosition = 'left-bottom' | 'left-top' | 'right-top' | 'right-bottom';
+
+export const CAM_POSITIONS: readonly CamPosition[] = [
+  'left-bottom',
+  'left-top',
+  'right-top',
+  'right-bottom',
+];
+
+export function isCamPosition(valor: unknown): valor is CamPosition {
+  return (
+    typeof valor === 'string' && (CAM_POSITIONS as readonly string[]).includes(valor)
+  );
+}
+
+/**
+ * Proporcao da moldura da camera, em unidades de canvas.
+ *
+ * Nao e 16:9. O Felipe recorta a imagem da webcam para se centralizar, e o
+ * recorte sai em 280x260 — quase quadrado. Uma moldura 16:9 em volta disso
+ * obrigaria a esticar a imagem ou deixar faixa preta dos dois lados.
+ */
+export const CAM_ASPECT = { width: 280, height: 260 } as const;
+
 export interface IngameConfig {
   showCam: boolean;
+  camPosition: CamPosition;
   camLabel: string;
   /** Vazio esconde o bloco inteiro. */
   nowPlaying: string;

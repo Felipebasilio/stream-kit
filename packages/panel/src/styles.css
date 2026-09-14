@@ -182,6 +182,25 @@ button.perigo {
   flex-wrap: wrap;
 }
 
+/* Os quatro cantos, dispostos como os cantos da tela: em cruz, nao em fila.
+   Achar "esquerda em cima" numa fila de quatro botoes iguais exige ler; num
+   quadrado a posicao do botao ja e a resposta. */
+.cantos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 320px;
+}
+.cantos button {
+  padding: 8px 10px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.cantos button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .abas {
   display: flex;
   gap: 6px;

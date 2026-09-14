@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   applyCanvas,
+  readCamFromUrl,
   readCanvasFromUrl,
   readEditModeFromUrl,
   readHoldFromUrl,
@@ -86,5 +87,30 @@ describe('applyCanvas', () => {
     applyCanvas(el, CANVASES.vertical);
     expect(el.dataset['orientation']).toBe('vertical');
     expect(el.dataset['canvas']).toBe('vertical');
+  });
+});
+
+describe('readCamFromUrl', () => {
+  it('sem o parametro, quem manda e o painel', () => {
+    expect(readCamFromUrl('?scene=ingame')).toBeNull();
+  });
+
+  it.each(['left-bottom', 'left-top', 'right-top', 'right-bottom'])(
+    'aceita a posicao %s',
+    (pos) => {
+      expect(readCamFromUrl(`?cam=${pos}`)).toBe(pos);
+    },
+  );
+
+  it('nao se importa com maiuscula nem espaco', () => {
+    expect(readCamFromUrl('?cam=%20RIGHT-TOP%20')).toBe('right-top');
+  });
+
+  it.each(['off', 'none', '0'])('%s e o layout sem camera', (valor) => {
+    expect(readCamFromUrl(`?cam=${valor}`)).toBe('off');
+  });
+
+  it('valor invalido cai no painel em vez de quebrar a cena', () => {
+    expect(readCamFromUrl('?cam=meio-do-nada')).toBeNull();
   });
 });
