@@ -201,15 +201,47 @@ button.perigo {
 
 .rede-linha {
   display: grid;
-  grid-template-columns: 30px 130px 1fr 34px;
+  grid-template-columns: 30px 130px minmax(0, 1fr) 36px;
   gap: 10px;
   align-items: center;
   margin-bottom: 8px;
 }
+/* O botao herdava o padding generico (10px 16px) e ficava mais largo e mais
+   alto que a coluna, vazando por cima do campo ao lado. */
+.rede-linha button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  line-height: 1;
+}
+
+/*
+ * A coluna inteira gruda no topo e rola por dentro quando nao cabe.
+ *
+ * Antes so a caixa da previa era sticky, e como a coluna encolhia ate a altura
+ * do proprio conteudo, ao rolar ate a secao de transicao a previa ja tinha
+ * ficado para tras — impossivel testar a transicao vendo o resultado.
+ */
+.coluna-previa {
+  position: sticky;
+  top: 64px;
+  max-height: calc(100vh - 78px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+}
+@media (max-width: 1180px) {
+  .coluna-previa {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+}
 
 .previa-caixa {
-  position: sticky;
-  top: 70px;
   background: var(--cartao);
   border: 1px solid var(--borda);
   border-radius: 12px;

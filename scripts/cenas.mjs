@@ -162,8 +162,11 @@ try {
               ]
             : [{ nome: 'controles', y0: h * 0.92, y1: h, x0: 0, x1: w }];
         const achados = [];
+        // A barra inferior fica de fora de proposito: ela encosta no rodape por
+        // decisao de projeto, aceitando que os controles do player cubram parte
+        // dela. Ver o comentario em .barra, no scenes.css.
         for (const el of document.querySelectorAll(
-          '.titulo, .kicker, .recado, .rede__arroba, .contagem__valor, .alerta__texto, .papo-topico',
+          '.titulo, .kicker, .recado, .contagem__valor, .alerta__texto, .papo-topico',
         )) {
           const r = el.getBoundingClientRect();
           if (r.width === 0) continue;

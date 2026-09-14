@@ -234,10 +234,15 @@
   position: absolute;
   left: 0;
   right: 0;
-  /* Nao encosta no rodape: os controles do player cobrem os 8% de baixo
-     (12% no vertical) e a barra sumiria justamente para quem assiste no
-     celular. Por isso ela flutua acima dessa faixa. */
-  bottom: calc(88 * var(--u));
+  /*
+   * Encostada no rodape, por decisao do Felipe.
+   *
+   * Os controles do player cobrem os 8% de baixo (12% no vertical), entao a
+   * barra fica parcialmente escondida quando o espectador toca na tela. A
+   * versao flutuante evitava isso, mas desequilibrava a distribuicao da cena.
+   * Excecao consciente, registrada tambem no verificador de areas seguras.
+   */
+  bottom: 0;
   height: calc(84 * var(--u));
   z-index: 3;
   display: flex;
@@ -257,6 +262,12 @@
   display: flex;
   align-items: center;
   white-space: nowrap;
+  /* min-width: 0 e o que permite o corte com reticencias: sem ele o texto em
+     nowrap define uma largura minima e empurra o resto da barra para fora. */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
   padding: 0 calc(44 * var(--u)) 0 calc(28 * var(--u));
   background: var(--accent);
   font-size: var(--fs-label);
@@ -267,10 +278,18 @@
 
 .barra__meio {
   flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
+  gap: calc(20 * var(--u));
   overflow: hidden;
   padding-left: calc(24 * var(--u));
+}
+
+.letreiro-caixa {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .letreiro {
@@ -295,15 +314,24 @@
   align-items: center;
   gap: calc(26 * var(--u));
   padding: 0 calc(32 * var(--u));
+  /* O relogio e os @s nunca encolhem: quem cede espaco e a marca e o bloco do
+     meio, que sabem cortar com reticencias. */
+  flex-shrink: 0;
 }
 
 .jogando {
   display: flex;
   align-items: center;
+  flex: 0 1 auto;
   font-size: var(--fs-handle);
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  min-width: 0;
+  max-width: calc(420 * var(--u));
+}
+.jogando__caixa {
+  min-width: 0;
 }
 .jogando__rotulo {
   display: block;
@@ -311,6 +339,15 @@
   letter-spacing: 0.22em;
   color: rgba(255, 255, 255, 0.55);
   margin-bottom: calc(2 * var(--u));
+  white-space: nowrap;
+}
+/* Nome de jogo longo corta com reticencias em vez de quebrar linha e estourar
+   a altura da barra — foi assim que "JOGANDO LLL" virou duas linhas cortadas. */
+.jogando__valor {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .relogio {
@@ -522,10 +559,26 @@
      linha — corte reto parece defeito, esmaecimento parece intencional. */
   mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
 }
+/*
+ * No vertical o nome do canal sai da barra.
+ *
+ * Em 1080px de largura nao cabem marca + jogando + @s + relogio: tudo fica
+ * truncado em reticencias e nenhuma informacao chega inteira. O @ em rodizio
+ * ja identifica o canal e ainda diz ONDE seguir, entao a marca e a peca que
+ * cede. Nas cenas de tela cheia e de papo ela continua, como marca d'agua.
+ */
 :root[data-orientation='vertical'] .barra__marca {
-  font-size: var(--fs-handle);
-  letter-spacing: 0.16em;
-  padding: 0 calc(36 * var(--u)) 0 calc(20 * var(--u));
+  display: none;
+}
+:root[data-orientation='vertical'] .barra__meio {
+  padding-left: calc(16 * var(--u));
+}
+:root[data-orientation='vertical'] .jogando {
+  max-width: calc(420 * var(--u));
+}
+:root[data-orientation='vertical'] .barra__direita {
+  padding: 0 calc(14 * var(--u));
+  gap: calc(12 * var(--u));
 }
 /* No vertical sobra menos largura: aperta os espacos para o relogio nao ser
    cortado na borda. */
@@ -534,7 +587,7 @@
   gap: calc(14 * var(--u));
 }
 :root[data-orientation='vertical'] .rodizio {
-  min-width: calc(150 * var(--u));
+  min-width: calc(120 * var(--u));
 }
 :root[data-orientation='vertical'] .relogio {
   font-size: calc(32 * var(--u));
@@ -546,9 +599,11 @@
   bottom: calc(150 * var(--u));
 }
 :root[data-orientation='vertical'] .barra {
-  bottom: calc(130 * var(--u));
+  bottom: 0;
 }
-:root[data-orientation='vertical'] .barra__meio {
+/* No vertical o letreiro some, mas o bloco do meio fica: e onde o "jogando"
+   passa a morar, com espaco de sobra. */
+:root[data-orientation='vertical'] .letreiro-caixa {
   display: none;
 }
 /* O alerta tambem se afasta da coluna de botoes. */

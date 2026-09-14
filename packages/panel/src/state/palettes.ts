@@ -23,11 +23,20 @@ export const PALETAS: readonly Paleta[] = [
     cores: { accent: '#ef3b4e', accent2: '#ff9aa4', bg1: '#140406', bg2: '#6b1420' },
   },
   {
+    // Escurecido de #f59e0b: no tom original, o texto branco da barra inferior
+    // sobre a cor principal ficava quase ilegivel. O teste de contraste pegou.
     nome: 'Âmbar',
-    cores: { accent: '#f59e0b', accent2: '#fcd34d', bg1: '#140d02', bg2: '#6b4310' },
+    cores: { accent: '#d97706', accent2: '#fcd34d', bg1: '#140d02', bg2: '#6b4310' },
   },
   {
     nome: 'Ciano',
     cores: { accent: '#06b6d4', accent2: '#67e8f9', bg1: '#031014', bg2: '#0a4c5c' },
+  },
+  // Tema escuro neutro: sem cor dominante, so preto, grafite e branco.
+  // A cor principal continua escura o bastante para o texto branco por cima
+  // dela (barra inferior, etiqueta da camera) continuar legivel.
+  {
+    nome: 'Preto',
+    cores: { accent: '#4a4a52', accent2: '#e8e8ee', bg1: '#000000', bg2: '#16161a' },
   },
 ];

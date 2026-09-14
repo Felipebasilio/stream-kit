@@ -33,6 +33,25 @@ describe('paletas prontas', () => {
     }
   });
 
+  it('existe um tema escuro neutro', () => {
+    const preto = PALETAS.find((p) => p.nome === 'Preto');
+    expect(preto).toBeDefined();
+    expect(preto?.cores.bg1).toBe('#000000');
+  });
+
+  it('a cor principal e escura o bastante para texto branco por cima', () => {
+    // A barra inferior e a etiqueta da camera usam texto branco sobre a cor
+    // principal. Uma cor clara ali deixaria o texto ilegivel.
+    const luminancia = (hex: string): number =>
+      (parseInt(hex.slice(1, 3), 16) * 0.299 +
+        parseInt(hex.slice(3, 5), 16) * 0.587 +
+        parseInt(hex.slice(5, 7), 16) * 0.114) /
+      255;
+    for (const p of PALETAS) {
+      expect(luminancia(p.cores.accent), p.nome).toBeLessThan(0.62);
+    }
+  });
+
   it('nenhum nome repetido', () => {
     expect(new Set(PALETAS.map((p) => p.nome)).size).toBe(PALETAS.length);
   });

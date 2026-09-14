@@ -46,7 +46,7 @@ export function App(): JSX.Element {
           <Som api={api} />
           <Transicao api={api} />
         </div>
-        <div>
+        <div className="coluna-previa">
           <Previa
             canvas={api.state.previewCanvas}
             aoTrocarCanvas={(id: CanvasId) => {

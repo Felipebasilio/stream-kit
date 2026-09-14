@@ -155,6 +155,13 @@ Suas configurações ficam fora do app e sobrevivem à troca.
 O plano [`06-app-mac.md`](implementation%20plans/06-app-mac.md) documenta os
 caminhos B e C, para o dia em que isso incomodar.
 
+## Documentação
+
+- [`docs/COMO-USAR.md`](docs/COMO-USAR.md) — ligar, configurar, salvar, desfazer,
+  onde ficam seus arquivos e o que fazer quando algo dá errado
+- [`docs/OBS.md`](docs/OBS.md) — adicionar as fontes, ver a mudança ao vivo,
+  encaixar nas cenas que você já tem, transição, vertical e orçamento de CPU
+
 ## Planos
 
 Comece por [`implementation plans/00-visao-geral.md`](implementation%20plans/00-visao-geral.md),
