@@ -7,7 +7,6 @@
 
 import { mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 import { CANVASES, type CanvasId } from '@stream-kit/types';
 
@@ -20,6 +19,14 @@ import { listOverlayUrls } from './urls.js';
 
 const HOST = '127.0.0.1';
 const PING_INTERVAL_MS = 20_000;
+
+/** Le um caminho de pasta do argumento, ou cai no padrao do monorepo. */
+function resolvePasta(argumento: string, padraoRelativo: string): string {
+  const indice = process.argv.indexOf(argumento);
+  const informado = indice >= 0 ? process.argv[indice + 1] : undefined;
+  if (informado !== undefined && informado.length > 0) return resolve(informado);
+  return resolve(process.cwd(), padraoRelativo);
+}
 
 async function main(): Promise<void> {
   const portaPedida = resolvePort(process.argv, DEFAULT_PORT);
@@ -41,14 +48,15 @@ async function main(): Promise<void> {
   await store.load();
 
   const porta = await findFreePort(canListen, portaPedida, HOST);
-  // Os builds ficam ao lado do servidor dentro do pacote publicado, e dois
-  // niveis acima durante o desenvolvimento no monorepo.
-  const aqui = dirname(fileURLToPath(import.meta.url));
+  // Quem sabe onde estao os builds e quem chama: o app de Mac passa os
+  // caminhos dentro do .app, e em desenvolvimento caimos na pasta do
+  // monorepo. Antes isso era deduzido de `import.meta.url`, o que quebrava ao
+  // empacotar — e ainda amarrava o servidor a uma disposicao de pastas.
   const app = await createApp({
     store,
     staticRoots: {
-      overlay: resolve(aqui, '..', '..', 'overlay', 'dist'),
-      panel: resolve(aqui, '..', '..', 'panel', 'dist'),
+      overlay: resolvePasta('--overlay', 'packages/overlay/dist'),
+      panel: resolvePasta('--panel', 'packages/panel/dist'),
       sounds: pastaSons,
     },
   });

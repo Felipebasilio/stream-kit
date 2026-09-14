@@ -7,8 +7,9 @@ export default tseslint.config(
       '**/dist/**',
       '**/dist-types/**',
       '**/coverage/**',
-      // Saida do empacotamento: contem o bundle ja minificado das cenas, que
-      // nao e codigo nosso para revisar.
+      // Saidas geradas: o bundle do empacotador e a pasta do .app construido.
+      // Nao e codigo nosso para revisar.
+      '**/apps/desktop/build/**',
       '**/release/**',
       '**/capturas/**',
       'legacy-python/**',
@@ -29,7 +30,7 @@ export default tseslint.config(
   {
     // Scripts de verificacao: rodam no Node, imprimem relatorio no terminal e
     // nao sao empacotados. Nao faz sentido cobrar deles as mesmas regras.
-    files: ['scripts/**/*.mjs'],
+    files: ['scripts/**/*.mjs', 'apps/*/empacotar.mjs'],
     languageOptions: {
       globals: {
         console: 'readonly',

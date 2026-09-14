@@ -12,7 +12,7 @@ describe('localizar', () => {
       dirname: '/Applications/Stream Kit.app/Contents/Resources/app.asar/dist',
     });
     expect(l.servidor).toBe(
-      '/Applications/Stream Kit.app/Contents/Resources/server/cli.js',
+      '/Applications/Stream Kit.app/Contents/Resources/server/cli.cjs',
     );
     expect(l.overlay).toContain('Resources/overlay');
     expect(l.painel).toContain('Resources/panel');

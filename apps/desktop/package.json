@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "description": "Stream Kit para macOS",
-  "main": "dist/main.js",
+  "main": "dist/main.cjs",
   "scripts": {
     "build": "tsc -b",
-    "start": "electron .",
-    "package": "pnpm build && electron-builder --mac --dir",
-    "dmg": "pnpm build && electron-builder --mac dmg"
+    "bundle": "node empacotar.mjs",
+    "start": "pnpm bundle && electron .",
+    "package": "pnpm bundle && electron-builder --mac --dir",
+    "dmg": "pnpm bundle && electron-builder --mac dmg"
   },
   "dependencies": {
     "@stream-kit/types": "workspace:*"
@@ -16,6 +17,7 @@
   "devDependencies": {
     "@types/node": "^22.10.2",
     "electron": "^33.3.0",
-    "electron-builder": "^25.1.8"
+    "electron-builder": "^25.1.8",
+    "esbuild": "^0.24.2"
   }
 }

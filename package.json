@@ -23,10 +23,12 @@
     "cenas": "pnpm build && node scripts/cenas.mjs",
     "clean": "find . -name '*.tsbuildinfo' -not -path '*/node_modules/*' -delete && rm -rf packages/*/dist packages/*/dist-types coverage capturas",
     "painel": "pnpm build && node scripts/painel.mjs",
-    "verificar": "pnpm check && pnpm cenas && pnpm painel && pnpm app && pnpm resistencia && pnpm paridade",
+    "verificar": "pnpm check && pnpm cenas && pnpm painel && pnpm app && pnpm empacotamento && pnpm resistencia && pnpm paridade",
     "stinger": "pnpm build && node scripts/stinger.mjs",
     "app": "pnpm build && node scripts/app.mjs",
-    "dmg": "pnpm build && pnpm --filter @stream-kit/desktop dmg"
+    "dmg": "pnpm build && pnpm --filter @stream-kit/desktop dmg",
+    "bundle": "pnpm build && pnpm --filter @stream-kit/desktop bundle",
+    "empacotamento": "pnpm bundle && node scripts/empacotamento.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

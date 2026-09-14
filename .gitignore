@@ -28,3 +28,6 @@ capturas/
 
 # saida do empacotamento do app
 release/
+
+# saida do empacotador (gerada a cada build)
+apps/desktop/build/

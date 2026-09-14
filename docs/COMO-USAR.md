@@ -210,9 +210,16 @@ abra de novo.
 ## 9. Para quem for mexer no código
 
 ```bash
-pnpm check        # tipos + lint + testes com cobertura
-pnpm verificar    # tudo acima + as verificações visuais e de ponta a ponta
+pnpm check           # tipos + lint + testes com cobertura
+pnpm empacotamento   # prova que o .app abre e que o servidor embutido sobe
+pnpm verificar       # tudo acima + as verificações visuais e de ponta a ponta
 ```
+
+> **Sobre o `pnpm empacotamento`:** ele existe porque um bug passou por tipos,
+> testes e lint e só apareceu depois de instalar o app. O Node 22 do seu
+> terminal aceita `require()` de um módulo ESM; o Node 20 embutido no Electron
+> não aceita. A verificação roda com `--no-experimental-require-module` para
+> reproduzir aqui o comportamento de lá.
 
 O piso de cobertura é 95% e **falha o comando** abaixo disso. As cenas não são
 medidas por cobertura de linha: são medidas por comparação de imagem, com

@@ -26,7 +26,7 @@ export interface Localizacao {
 export function localizar(opcoes: LocalizacaoOpcoes): Localizacao {
   if (opcoes.empacotado && opcoes.resourcesPath !== undefined) {
     return {
-      servidor: join(opcoes.resourcesPath, 'server', 'cli.js'),
+      servidor: join(opcoes.resourcesPath, 'server', 'cli.cjs'),
       overlay: join(opcoes.resourcesPath, 'overlay'),
       painel: join(opcoes.resourcesPath, 'panel'),
     };

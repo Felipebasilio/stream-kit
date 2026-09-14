@@ -7,8 +7,10 @@ files:
   - dist/**/*
   - package.json
 extraResources:
-  # Os builds do servidor, das cenas e do painel viajam junto com o app.
-  - from: ../../packages/server/dist
+  # O servidor vai empacotado num arquivo so, com as dependencias dentro.
+  # Copiar a saida do tsc nao funcionava: faltava o package.json que diz que
+  # aquilo e ESM, e faltavam o fastify e o ws.
+  - from: build/server
     to: server
   - from: ../../packages/overlay/dist
     to: overlay

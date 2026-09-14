@@ -128,8 +128,12 @@ errar quebra a compilação.
 ## O app de Mac
 
 ```bash
-pnpm dmg     # gera release/Stream Kit-0.1.0-arm64.dmg
+pnpm dmg     # gera apps/desktop/release/Stream Kit-0.1.0-arm64.dmg
 ```
+
+O processo principal e o servidor vão **empacotados num arquivo cada**, com as
+dependências dentro. Sem isso o app não abre: o Electron roda o processo
+principal como CommonJS e todos os nossos pacotes são ESM.
 
 Isso só roda **no macOS** — não dá para construir um app de macOS em outro
 sistema. Abra o `.dmg` e arraste o Stream Kit para a pasta Aplicativos.
