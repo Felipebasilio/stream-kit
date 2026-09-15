@@ -41,6 +41,7 @@
 .recado {
   /* Folga suficiente para o cedilha do "Ç" e o til do "Ã" nao encostarem —
      em portugues isso acontece o tempo todo, e em ingles quase nunca. */
+  margin-bottom: 50px;
   margin-top: calc(34 * var(--u));
   font-size: var(--fs-body);
   font-weight: 500;
@@ -707,9 +708,6 @@
 :root[data-orientation='vertical'] .redes {
   flex-direction: column;
 }
-:root[data-orientation='vertical'] .redes-bloco {
-  bottom: calc(150 * var(--u));
-}
 :root[data-orientation='vertical'] .barra {
   bottom: 0;
 }
@@ -730,8 +728,12 @@
 :root[data-orientation='vertical'] .palco {
   padding: 0 15% 0 calc(40 * var(--u));
 }
+/* Redes ficam no centro do quadro (left/right iguais). O `right: 15%` antigo
+   empurrava a pilula larga do Discord pra esquerda e comia a borda do icone. */
 :root[data-orientation='vertical'] .redes-bloco {
-  right: 15%;
+  bottom: calc(150 * var(--u));
+  left: 0;
+  right: 0;
 }
 
 /* ====================== transicao ====================== */

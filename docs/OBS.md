@@ -21,16 +21,19 @@ servidor é o seu Mac.
 
 ---
 
+
+
 ## 1. Uma fonte, passo a passo
 
 Com o Stream Kit aberto:
 
 1. No painel, escolha a resolução na barra de abas da prévia (**1920x1080**,
-   **2560x1440** ou **1080x1920**)
+  **2560x1440** ou **1080x1920**)
 2. Clique em **copiar** na linha da cena que você quer
 3. No OBS: **Fontes → + → Navegador**
 4. Dê um nome (ex.: `Stream Kit — Começando`) e confirme
 5. Preencha:
+
 
 | Campo                                           | Valor                       |
 | ----------------------------------------------- | --------------------------- |
@@ -38,8 +41,9 @@ Com o Stream Kit aberto:
 | Largura                                         | a mesma do canvas escolhido |
 | Altura                                          | a mesma do canvas escolhido |
 | FPS personalizado                               | deixe desmarcado            |
-| Desligar a fonte quando não estiver visível     | ✅ **marque**               |
-| Atualizar o navegador quando a cena ficar ativa | ⬜ deixe desmarcado         |
+| Desligar a fonte quando não estiver visível     | ✅ **marque**                |
+| Atualizar o navegador quando a cena ficar ativa | ⬜ deixe desmarcado          |
+
 
 **Por que marcar "desligar quando não estiver visível":** cada fonte de
 navegador é um Chromium animando CSS sem parar. Uma cena que não está no ar não
@@ -71,6 +75,8 @@ faz a troca de layout pelo Stream Deck. Ver a seção 3.
 
 ---
 
+
+
 ## 2. Ver a mudança acontecendo
 
 Vale fazer uma vez, porque é o que convence:
@@ -85,6 +91,8 @@ Funciona igual para cores, textos, @s e tópicos. Clique numa paleta e todas as
 cenas trocam de cor de uma vez.
 
 ---
+
+
 
 ## 3. Encaixando nas cenas que você já tem
 
@@ -108,10 +116,11 @@ faixa preta dos lados.
 
 Números da **área interna** da moldura, já descontada a borda. Ponha esses
 valores em **botão direito na webcam → Transformar → Editar transformação**,
-nos campos _Posição_ e _Tamanho da caixa delimitadora_, com o tipo
+nos campos *Posição* e *Tamanho da caixa delimitadora*, com o tipo
 **"Ajustar aos limites internos"** — assim o OBS respeita a proporção sozinho.
 
 **1920x1080**
+
 
 | Layout             | Posição X | Posição Y | Tamanho |
 | ------------------ | --------- | --------- | ------- |
@@ -120,7 +129,9 @@ nos campos _Posição_ e _Tamanho da caixa delimitadora_, com o tipo
 | ↙ esquerda embaixo | 50        | 672       | 298x277 |
 | ↘ direita embaixo  | 1572      | 672       | 298x277 |
 
+
 **2560x1440**
+
 
 | Layout             | Posição X | Posição Y | Tamanho |
 | ------------------ | --------- | --------- | ------- |
@@ -129,7 +140,9 @@ nos campos _Posição_ e _Tamanho da caixa delimitadora_, com o tipo
 | ↙ esquerda embaixo | 66        | 896       | 397x368 |
 | ↘ direita embaixo  | 2096      | 896       | 397x368 |
 
+
 **1080x1920 (vertical)**
+
 
 | Layout             | Posição X | Posição Y | Tamanho |
 | ------------------ | --------- | --------- | ------- |
@@ -137,6 +150,7 @@ nos campos _Posição_ e _Tamanho da caixa delimitadora_, com o tipo
 | ↗ direita em cima  | 346       | 196       | 530x491 |
 | ↙ esquerda embaixo | 62        | 1137      | 530x491 |
 | ↘ direita embaixo  | 346       | 1137      | 530x491 |
+
 
 > No vertical a moldura da direita **não** encosta na borda: os 15% da direita
 > são onde o celular desenha os botões de curtir e comentar. Meio rosto
@@ -179,9 +193,9 @@ canto — senão a moldura brigaria com a webcam bem no meio da live. E `cam=off
 Faça uma vez, use para sempre:
 
 1. Duplique sua cena de jogo cinco vezes. Sugestão de nome:
-   `Jogo ↖`, `Jogo ↗`, `Jogo ↙`, `Jogo ↘`, `Jogo sem câmera`
+  `Jogo ↖`, `Jogo ↗`, `Jogo ↙`, `Jogo ↘`, `Jogo sem câmera`
 2. Em cada uma, na fonte de navegador do overlay, acrescente o `&cam=` daquele
-   layout na URL
+  layout na URL
 3. Em cada uma, posicione a webcam com a tabela acima
 4. Na `Jogo sem câmera`, use `&cam=off` e **desmarque o olho** da webcam
 
@@ -210,7 +224,7 @@ atalho do OBS.
 2. Procure cada cena na lista. Cada uma tem a linha **"Mudar para a cena"**
 3. Clique no campo e aperte a combinação, ex.: `Ctrl+Alt+1` até `Ctrl+Alt+5`
 4. No software do deck, use a ação de **atalho de teclado** com a mesma
-   combinação
+  combinação
 
 Use combinações que nenhum jogo usa. `Ctrl+Alt+número` é seguro; `F13` a `F19`
 é mais seguro ainda, porque teclado nenhum tem essas teclas e jogo nenhum
@@ -225,8 +239,8 @@ animação das outras trocas.
 
 #### E o painel?
 
-Continua funcionando, e é o jeito de **experimentar**: na seção _Overlay
-in-game_ tem os quatro cantos em cruz. Ali a moldura desliza de um canto ao
+Continua funcionando, e é o jeito de **experimentar**: na seção *Overlay
+in-game* tem os quatro cantos em cruz. Ali a moldura desliza de um canto ao
 outro, animada, ao vivo.
 
 A diferença: pelo painel só a moldura se move, não a webcam. Use o painel para
@@ -265,6 +279,8 @@ quem mandou algo por fora, como um PIX.
 
 ---
 
+
+
 ## 4. Transição
 
 Dois caminhos, e os dois funcionam.
@@ -293,6 +309,8 @@ Custa zero CPU durante a live. Regenere depois de mudar as cores.
 
 ---
 
+
+
 ## 5. TikTok Live Studio e outros programas — e a pergunta do túnel
 
 As cenas são páginas web. Qualquer programa que aceite uma URL como fonte
@@ -314,11 +332,11 @@ própria máquina; o servidor já escuta exatamente aí.
 Duas coisas para conferir na primeira vez:
 
 - **Fundo transparente.** Abra a cena `ingame` primeiro. Se o Live Studio
-  desenhar um retângulo preto em vez de deixar o jogo aparecer por trás, é
-  porque aquele tipo de fonte não respeita transparência. É limitação do
-  programa, não da cena — no OBS a mesma URL funciona.
+desenhar um retângulo preto em vez de deixar o jogo aparecer por trás, é
+porque aquele tipo de fonte não respeita transparência. É limitação do
+programa, não da cena — no OBS a mesma URL funciona.
 - **A porta.** Se a 7373 estiver ocupada o servidor usa outra. Copie sempre do
-  painel em vez de digitar.
+painel em vez de digitar.
 
 Rodar OBS e Live Studio ao mesmo tempo dobra o custo: cada fonte de navegador é
 um Chromium. Marque "desligar quando não estiver visível" onde der.
@@ -328,11 +346,13 @@ um Chromium. Marque "desligar quando não estiver visível" onde der.
 O túnel só entra se a máquina que **renderiza** o overlay não for o Mac que
 roda o servidor. Três situações, três respostas diferentes:
 
+
 | Onde está o programa          | O que usar                 |
 | ----------------------------- | -------------------------- |
 | No mesmo Mac                  | `localhost`. Nada a fazer. |
 | Noutra máquina, na mesma casa | O IP da rede local         |
 | Fora da sua rede              | Aí sim, um túnel           |
+
 
 **Mesma casa:** o caminho certo é o IP local do Mac (`192.168.x.x`), não um
 túnel — é mais rápido, de graça, funciona sem internet e o overlay não sai de
@@ -344,21 +364,21 @@ você precisar.
 antes de gastar a tarde:
 
 1. **A página de aviso do plano grátis quebra a fonte.** O ngrok mostra um
-   interstício de aviso para tráfego HTML no plano grátis. Um navegador humano
+  interstício de aviso para tráfego HTML no plano grátis. Um navegador humano
    clica em "Visit Site" e segue; uma fonte de navegador não clica em nada —
    ela renderiza a página de aviso. Dá para pular mandando um cabeçalho
    próprio, e uma fonte de navegador não deixa você mandar cabeçalho. Na
    prática: overlay não aparece.
 2. **O túnel publica o servidor inteiro, não só as cenas.** Isso inclui o
-   painel e o `POST /api/state`, que não têm senha nenhuma — nunca tiveram,
+  painel e o `POST /api/state`, que não têm senha nenhuma — nunca tiveram,
    porque o servidor foi desenhado para escutar só a própria máquina. Quem
    descobrir a URL reescreve o seu overlay no meio da live. Antes de abrir um
    túnel, o projeto precisa de autenticação.
 3. **Os limites do plano grátis são apertados para uma live:** 1 GB por mês de
-   saída e 20.000 requisições por mês. Cada recarregamento de fonte baixa as
+  saída e 20.000 requisições por mês. Cada recarregamento de fonte baixa as
    fontes tipográficas de novo (~1 MB).
 4. **A banda sai do mesmo lugar que a transmissão.** Tudo que passa pelo túnel
-   é upload seu — o mesmo upload que está levando o vídeo ao ar.
+  é upload seu — o mesmo upload que está levando o vídeo ao ar.
 
 Resumindo: no seu caso o ngrok seria trabalho e risco para resolver um problema
 que você não tem. Se um dia a máquina mudar de lugar, o primeiro passo é pôr
@@ -366,20 +386,24 @@ senha no painel, não abrir o túnel.
 
 ---
 
+
+
 ## 6. Vertical e horizontal ao mesmo tempo
 
 Nossos overlays são só URLs, então qualquer mecanismo do OBS consome.
 
 - **Lives separadas:** mesma instância do OBS, outra coleção de cenas, canvas
-  em 1080x1920, apontando para as URLs com `canvas=vertical`. Zero plugin.
+em 1080x1920, apontando para as URLs com `canvas=vertical`. Zero plugin.
 - **Simultâneas:** o OBS tem múltiplos canvas desde a 31.1, mas amarrados ao
-  Multitrack Video, que não serve para Kick/YouTube. As opções são o plugin
-  **Aitum Vertical** ou uma **segunda instância do OBS** com canvas vertical
-  próprio. A segunda instância é mais robusta e dobra o custo de codificação.
+Multitrack Video, que não serve para Kick/YouTube. As opções são o plugin
+**Aitum Vertical** ou uma **segunda instância do OBS** com canvas vertical
+próprio. A segunda instância é mais robusta e dobra o custo de codificação.
 
 Nenhuma dessas escolhas encosta no nosso código. Dá para trocar quando quiser.
 
 ---
+
+
 
 ## 7. Orçamento de CPU
 
@@ -389,17 +413,19 @@ junto, isso soma.
 Se começar a perder quadro:
 
 1. **Marque "desligar quando não estiver visível"** em todas as fontes. É o de
-   maior efeito, de longe.
+  maior efeito, de longe.
 2. **Baixe a intensidade** da animação de fundo no painel. Em zero, o fundo
-   fica estático e o custo cai bastante.
+  fica estático e o custo cai bastante.
 3. **Use uma cena de alertas só**, inserida nas outras, em vez de uma cópia por
-   cena.
+  cena.
 4. **Prefira o stinger de vídeo** à transição por navegador.
 
 Quadro perdido estraga a experiência de quem assiste muito mais do que qualquer
 overlay bonito conserta.
 
 ---
+
+
 
 ## 8. Áreas seguras
 
@@ -415,6 +441,8 @@ distribuição da cena fica equilibrada.
 Ligue as **Guias** para ver as faixas enquanto posiciona suas próprias fontes.
 
 ---
+
+
 
 ## 9. Problemas comuns
 
@@ -440,5 +468,5 @@ confira se a fonte aparece e se não está mutada.
 
 **Quero abaixar a música quando o alerta toca.**
 Isso é filtro do OBS: no mixer, engrenagem da música → **Filtros** →
-**Compressor** → em _Fonte de cadeia lateral_, escolha a fonte de áudio do
+**Compressor** → em *Fonte de cadeia lateral*, escolha a fonte de áudio do
 Stream Kit. Proporção 10:1, limiar por volta de −30 dB.
