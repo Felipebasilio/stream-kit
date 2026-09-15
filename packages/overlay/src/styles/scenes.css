@@ -410,19 +410,32 @@
 /*
  * O rodizio de @s.
  *
- * Era `position: absolute` numa caixa de largura fixa, e por isso um @ longo
- * — "https://discord.gg/..." — era cortado no meio. Agora as pilulas se
- * empilham na MESMA celula de grid: elas continuam uma por cima da outra,
- * mas a celula passa a ter a largura da maior, entao ninguem e cortado.
- * O maximo existe so para um @ absurdo nao empurrar o relogio para fora.
+ * Tres coisas precisam ser verdade ao mesmo tempo, e cada uma ja quebrou:
+ *
+ *  1. Nenhum @ pode ser cortado. Era `position: absolute` numa caixa de
+ *     largura fixa, e "https://discord.gg/..." sumia no meio.
+ *  2. Cada pilula tem a largura do SEU texto. As pilulas se empilham na mesma
+ *     celula de grid, e o padrao da celula e esticar todo mundo ate a largura
+ *     da maior — entao "@lipe" ganhava a mesma pilula gigante do Discord.
+ *     `justify-items: end` desliga esse esticamento.
+ *  3. O relogio nao pode andar. E por isso que as pilulas ficam empilhadas em
+ *     vez de lado a lado: a celula reserva a largura da maior e nao muda mais.
+ *     Se o rodizio encolhesse junto com o @ da vez, o relogio escorregaria de
+ *     lugar a cada cinco segundos, a live inteira.
+ *
+ * O `end` alinha a pilula do lado do relogio, entao a sobra fica do lado de
+ * fora. Como a barra nao tem mais faixa de fundo, essa sobra e invisivel.
  */
 .rodizio {
   display: grid;
+  justify-items: end;
   height: calc(52 * var(--u));
   max-width: calc(560 * var(--u));
 }
 .rodizio .rede {
   grid-area: 1 / 1;
+  /* A pilula tem a altura da faixa; a largura vem do conteudo dela. */
+  height: 100%;
   opacity: 0;
   transform: translateY(calc(8 * var(--u)));
   transition:

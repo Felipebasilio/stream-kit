@@ -40,8 +40,15 @@ const COBERTURA = {
   vertical: { topo: 0.08, base: 0.12, direita: 0.15 },
 };
 
-/** O @ mais longo que ele usa de verdade: o convite do Discord. */
+/**
+ * Dois @s de tamanhos bem diferentes, de proposito.
+ *
+ * O longo e o convite do Discord, que era cortado no meio. O curto existe
+ * para provar o outro lado: a pilula dele nao pode herdar a largura do
+ * Discord so porque os dois dividem a mesma celula do rodizio.
+ */
 const ARROBA_LONGA = 'https://discord.gg/lipebasa';
+const ARROBA_CURTA = '@lipe';
 
 let falhas = 0;
 function checar(nome, ok, detalhe = '') {
@@ -79,7 +86,10 @@ await fetch(`${base}/api/state`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    socials: [{ icon: 'discord', handle: ARROBA_LONGA, show: true }],
+    socials: [
+      { icon: 'kick', handle: ARROBA_CURTA, show: true },
+      { icon: 'discord', handle: ARROBA_LONGA, show: true },
+    ],
   }),
 });
 
@@ -90,13 +100,12 @@ const navegador = await chromium.launch({
 
 function medir() {
   const cam = document.querySelector('.camera');
-  const pilula = document.querySelector('.rodizio .rede');
-  const arroba = document.querySelector('.rodizio .rede__arroba');
   const icone = document.querySelector(
     '.rodizio .rede__icone svg, .rodizio .rede__icone img',
   );
   const caixaIcone = document.querySelector('.rodizio .rede__icone');
   const barra = document.querySelector('.barra');
+  const rodizio = document.querySelector('.rodizio');
   return {
     camera:
       cam === null
@@ -110,15 +119,18 @@ function medir() {
               h: Math.round(r.height),
             };
           })(),
-    arroba:
-      arroba === null
-        ? null
-        : {
-            // scrollWidth maior que clientWidth e exatamente o corte.
-            cortado: arroba.scrollWidth > arroba.clientWidth + 1,
-            texto: arroba.textContent,
-          },
-    pilulaLargura: pilula === null ? 0 : Math.round(pilula.getBoundingClientRect().width),
+    // Uma entrada por @ visivel, na ordem em que entram no rodizio.
+    pilulas: [...document.querySelectorAll('.rodizio .rede')].map((el) => {
+      const arroba = el.querySelector('.rede__arroba');
+      return {
+        texto: arroba === null ? '' : arroba.textContent,
+        largura: Math.round(el.getBoundingClientRect().width),
+        // scrollWidth maior que clientWidth e exatamente o corte.
+        cortado: arroba !== null && arroba.scrollWidth > arroba.clientWidth + 1,
+      };
+    }),
+    rodizioLargura:
+      rodizio === null ? 0 : Math.round(rodizio.getBoundingClientRect().width),
     respiroIcone:
       icone === null || caixaIcone === null
         ? null
@@ -210,10 +222,37 @@ try {
       );
 
       if (pos === 'left-bottom') {
+        // `text-transform` muda o desenho, nao o textContent: compara cru.
+        const acha = (alvo) => m.pilulas.find((p) => p.texto === alvo);
+        const curta = acha(ARROBA_CURTA);
+        const longa = acha(ARROBA_LONGA);
+
         checar(
           `${canvas.id}: o @ longo aparece inteiro`,
-          m.arroba !== null && !m.arroba.cortado,
-          `"${m.arroba?.texto ?? ''}" em ${m.pilulaLargura}px`,
+          longa !== undefined && !longa.cortado,
+          `"${longa?.texto ?? 'sumiu'}" em ${String(longa?.largura ?? 0)}px`,
+        );
+        /*
+         * As pilulas dividem a mesma celula do rodizio. O padrao da celula e
+         * esticar todo mundo ate a largura da maior, e era isso que dava ao
+         * "@lipe" a pilula gigante do Discord.
+         */
+        checar(
+          `${canvas.id}: cada @ tem a largura do seu proprio texto`,
+          curta !== undefined &&
+            longa !== undefined &&
+            curta.largura < longa.largura * 0.6,
+          `curta ${String(curta?.largura ?? 0)}px contra longa ${String(longa?.largura ?? 0)}px`,
+        );
+        /*
+         * A caixa do rodizio, por outro lado, NAO pode encolher junto: ela
+         * reserva a largura da maior. Se encolhesse, o relogio escorregaria de
+         * lugar a cada cinco segundos.
+         */
+        checar(
+          `${canvas.id}: a caixa do rodizio nao encolhe com o @ da vez`,
+          longa !== undefined && m.rodizioLargura >= longa.largura,
+          `caixa ${String(m.rodizioLargura)}px, maior pilula ${String(longa?.largura ?? 0)}px`,
         );
         checar(
           `${canvas.id}: o icone tem respiro dentro do quadrado`,
