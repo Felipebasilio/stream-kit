@@ -48,7 +48,20 @@ const servidor = new ServidorEmbutido({
       env: { ...process.env, ELECTRON_RUN_AS_NODE: '1' },
     }),
   executavel: process.execPath,
-  args: [local.servidor],
+  /*
+   * As pastas vao explicitas, e isso nao e detalhe.
+   *
+   * O servidor deixou de deduzir onde ficam os builds quando passou a ser
+   * empacotado — deducao por `import.meta.url` nao sobrevive ao bundler. Quem
+   * sabe onde as coisas estao e quem chama, e aqui e o unico lugar que sabe a
+   * diferenca entre rodar de dentro de um `.app` e rodar do monorepo.
+   *
+   * Sem estes argumentos o servidor sobe, escuta, responde `/health` e devolve
+   * 404 no painel e nas cenas: ele cai no palpite relativo ao diretorio de
+   * trabalho, que dentro de um `.app` nao e o monorepo. Foi assim que a janela
+   * do app abriu mostrando `Route GET:/ not found`.
+   */
+  args: [local.servidor, '--overlay', local.overlay, '--panel', local.painel],
   aoImprimir: (linha) => {
     process.stdout.write(linha);
     if (porta !== undefined) return;

@@ -5,6 +5,7 @@
  * coordena (store, hub, portas) e testado em separado.
  */
 
+import { existsSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 
@@ -15,17 +16,30 @@ import { nodeFs } from './node-fs.js';
 import { resolvePort, resolveStatePath } from './paths.js';
 import { canListen, DEFAULT_PORT, findFreePort } from './port.js';
 import { StateStore } from './state-store.js';
+import { conferirRaizes, explicarRaizFaltando, type RaizPedida } from './static-roots.js';
 import { listOverlayUrls } from './urls.js';
 
 const HOST = '127.0.0.1';
 const PING_INTERVAL_MS = 20_000;
 
-/** Le um caminho de pasta do argumento, ou cai no padrao do monorepo. */
-function resolvePasta(argumento: string, padraoRelativo: string): string {
+/**
+ * Le um caminho de pasta do argumento, ou cai no padrao do monorepo.
+ *
+ * Devolve tambem SE veio do argumento. Essa distincao e o que separa "o app
+ * foi empacotado errado" (tem que recusar subir) de "ainda nao rodei o build"
+ * (basta avisar) — ver `static-roots.ts`.
+ */
+function resolvePasta(
+  nome: string,
+  argumento: string,
+  padraoRelativo: string,
+): RaizPedida {
   const indice = process.argv.indexOf(argumento);
   const informado = indice >= 0 ? process.argv[indice + 1] : undefined;
-  if (informado !== undefined && informado.length > 0) return resolve(informado);
-  return resolve(process.cwd(), padraoRelativo);
+  if (informado !== undefined && informado.length > 0) {
+    return { nome, caminho: resolve(informado), explicito: true };
+  }
+  return { nome, caminho: resolve(process.cwd(), padraoRelativo), explicito: false };
 }
 
 async function main(): Promise<void> {
@@ -54,11 +68,33 @@ async function main(): Promise<void> {
   // caminhos dentro do .app, e em desenvolvimento caimos na pasta do
   // monorepo. Antes isso era deduzido de `import.meta.url`, o que quebrava ao
   // empacotar — e ainda amarrava o servidor a uma disposicao de pastas.
+  const raizCenas = resolvePasta('cenas', '--overlay', 'packages/overlay/dist');
+  const raizPainel = resolvePasta('painel', '--panel', 'packages/panel/dist');
+
+  /*
+   * Confere ANTES de escutar a porta.
+   *
+   * Sem isto o servidor subia sem a pasta do painel e respondia 404 em `/` —
+   * a janela do app abria mostrando `Route GET:/ not found`, sem nenhuma
+   * pista do que fazer. Um servidor que sobe pela metade e pior que um que
+   * nao sobe.
+   */
+  const conferencia = conferirRaizes([raizCenas, raizPainel], existsSync);
+  for (const aviso of conferencia.avisos) {
+    console.warn(`[aviso] ${explicarRaizFaltando(aviso)}`);
+  }
+  if (conferencia.faltando.length > 0) {
+    for (const raiz of conferencia.faltando) {
+      console.error(`[erro] ${explicarRaizFaltando(raiz)}`);
+    }
+    process.exit(1);
+  }
+
   const app = await createApp({
     store,
     staticRoots: {
-      overlay: resolvePasta('--overlay', 'packages/overlay/dist'),
-      panel: resolvePasta('--panel', 'packages/panel/dist'),
+      overlay: raizCenas.caminho,
+      panel: raizPainel.caminho,
       sounds: pastaSons,
       icons: pastaIcones,
     },
