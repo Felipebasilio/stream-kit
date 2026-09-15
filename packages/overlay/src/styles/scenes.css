@@ -41,7 +41,6 @@
 .recado {
   /* Folga suficiente para o cedilha do "Ç" e o til do "Ã" nao encostarem —
      em portugues isso acontece o tempo todo, e em ingles quase nunca. */
-  margin-bottom: 50px;
   margin-top: calc(34 * var(--u));
   font-size: var(--fs-body);
   font-weight: 500;
@@ -723,17 +722,44 @@
 :root[data-orientation='vertical'] .rodizio {
   max-width: calc(var(--canvas-w) - 60 * var(--u));
 }
+/*
+ * No vertical o bloco de @s sai do posicionamento absoluto e entra na coluna.
+ *
+ * No horizontal ele flutua a 110u do rodape e da certo: sobra altura de sobra
+ * e o palco nunca chega la. No vertical nao sobra. Com a contagem regressiva
+ * ligada, o palco cresce para baixo, o bloco continua ancorado ao rodape — e
+ * os dois se atravessam, porque um elemento absoluto nao empurra nem e
+ * empurrado. Foi assim que o cronometro apareceu por tras dos @s.
+ *
+ * A correcao nao e mexer nos numeros ate parar de bater: e tirar o bloco do
+ * absoluto. Virando linha de uma coluna flex, o palco ocupa o que sobra e o
+ * bloco fica embaixo dele, com ou sem contagem, com tres @s ou com um.
+ *
+ * `position: relative` em vez de `static` so para o `z-index: 2` continuar
+ * valendo sobre o fundo animado.
+ *
+ * Nada disto alcanca o horizontal, que ja funciona: as regras moram todas
+ * dentro do seletor de orientacao vertical.
+ */
+:root[data-orientation='vertical'] .cena--opaca {
+  display: flex;
+  flex-direction: column;
+}
 /* O palco inteiro se desloca para a esquerda dos botoes de interacao. O texto
    fica centralizado dentro da area visivel, nao dentro do quadro. */
 :root[data-orientation='vertical'] .palco {
   padding: 0 15% 0 calc(40 * var(--u));
+  /* Ocupa o que sobrar depois do bloco de @s, em vez da altura inteira. */
+  height: auto;
+  flex: 1 1 auto;
+  min-height: 0;
 }
-/* Redes ficam no centro do quadro (left/right iguais). O `right: 15%` antigo
-   empurrava a pilula larga do Discord pra esquerda e comia a borda do icone. */
 :root[data-orientation='vertical'] .redes-bloco {
-  bottom: calc(150 * var(--u));
-  left: 0;
-  right: 0;
+  position: relative;
+  flex: 0 0 auto;
+  inset: auto;
+  /* Para antes dos 12% dos controles do player e dos 15% dos botoes. */
+  padding: 0 15% calc(150 * var(--u)) calc(40 * var(--u));
 }
 
 /* ====================== transicao ====================== */
